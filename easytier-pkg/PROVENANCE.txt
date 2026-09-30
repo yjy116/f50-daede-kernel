@@ -1,0 +1,91 @@
+F50 EasyTier core and LuCI candidate
+==================================
+Pinned upstream: EasyTier/luci-app-easytier v2.6.4, commit
+bbe6b84f7270813c49ab9a8d0a6d69cfd86a8f74.
+https://github.com/EasyTier/luci-app-easytier/releases/tag/v2.6.4
+inputs.json pins the aarch64_generic-SNAPSHOT ZIP by GitHub asset digest and
+the three selected APKs by exact SHA256. The alternative noweb APK is not built
+or installed. No architecture override is used; original core=aarch64_generic
+and LuCI/Chinese=noarch are retained. Original binaries remain byte-identical.
+
+Each source APK has one signature block but no publisher verification key was
+found. Do not call them unsigned or cryptographically authenticated. The input
+trust evidence is the pinned public release ZIP/hash and reviewed contents.
+Rebuilding discards the unverified source signature and produces one signature
+under a fresh build-local key. The private key only lives in container /dev/shm;
+only public key/APKs/manifest/checksums/diff are exported. No device-side
+--allow-untrusted, force-architecture or force-broken-world is used.
+
+Metadata allowlist
+==================
+easytier 2.6.4 -> 2.6.4-r1: remove only kmod-tun, retaining libc.
+luci-app-easytier 2.6.4-r1 -> 2.6.4-r2: remove only kmod-tun; add exact paired
+easytier=2.6.4-r1 so a normal installation supplies the reviewed core.
+Chinese 26.136.03667~39d7eda -> 26.136.03667~39d7eda-r1: require exact paired
+luci-app-easytier=2.6.4-r2. Each description explicitly identifies F50 adaptation.
+Dependencies use apk's canonical sorted order; membership remains exact.
+Only the APK identity hash and the exact changed init size may be recomputed.
+Every other dependency/field, payload file, ACL/owner/mtime, directory and all
+original lifecycle scripts must remain unchanged. No fake kernel/kmod package.
+
+Kernel evidence must be a PASS report for 7.2.8-f50-dae1 with the actual config
+bound by SHA256/size and CONFIG_TUN=y. This is packaging evidence, not a network
+runtime test. Generic AArch64 ELF shape/static linking was inspected; the parent
+must run the core's version check on F50 before claiming actual compatibility.
+
+The sole payload change: etc/init.d/easytier
+==========================================
+The input must match SHA256
+d95edecf5c9297af9aa05becd8be8e4f52008deafd47bea96f3892a214a4d274.
+patch_init.py renames the two original start/stop functions, replaces exactly
+two launcher log statements containing core_cmd or web_config with a fixed
+message, and appends wrappers.sh. Original argument construction/execution,
+configuration and network/firewall helpers are unchanged. The full unified
+diff is exported for review; the build also parses the resulting shell syntax.
+
+Both disabled: start returns before touching logs/UCI/upstream startup.
+An enabled start records /var/run/easytier-f50.started before entering upstream,
+so an enabled->disabled stop still runs the original cleanup. A never-enabled,
+fully disabled stop does nothing. Successful upstream stop removes the marker;
+failure keeps it and propagates the error. Marker creation failure is logged
+and stops the start action. A fresh enabled start after reboot re-creates it.
+The marker contains no secret and is root-only. It records entry into the
+startup path, not proof that the daemon reached readiness.
+
+This deliberately is not a complete ownership/state redesign. The volatile
+marker cannot establish ownership of old persistent resources across a reboot
+with disabled configuration. Enabled upstream paths still use fixed UCI names
+and may commit/reload pending network/firewall changes; upstream delayed cleanup
+and temporary configuration backup restoration also remain. Standard package
+post-install can separately commit UCI. The parent's install should therefore
+have no unrelated pending UCI changes or stale EasyTier restore backups.
+
+Logging and online-update limits
+===============================
+Only the two confirmed launcher statements stop recording command arguments.
+Arguments may still be visible to privileged process inspection; core-generated
+logs are upstream behavior and have not been proven free of sensitive data.
+No existing device logs or credentials were read or copied.
+
+The original missing/invalid-core automatic downloader remains unchanged by
+explicit scope decision. It fetches a mutable upstream release through configured
+proxies and uses insecure TLS options without pinned payload hashes. Changing
+that path to a hard error would remove an upstream function, so it is not hidden
+inside these two bug fixes. This installation pairs a reviewed core to avoid
+that path in normal use; later online updates are not verified by this pipeline.
+
+Default and build acceptance
+============================
+The original enabled=0/web_enabled=0 defaults are preserved. Public example
+network configuration is unchanged and must not be treated as a private network.
+The builder never executes package lifecycle scripts or starts any daemon.
+Dockerfile uses pinned Alpine 3.23.6 and apk-tools 3.0.8-r0. --input-dir optionally
+caches the exact ZIP; required arguments are --kernel-validation, --kernel-config,
+and --output. Parent owns the workflow, repository publication and deployment.
+
+Tests execute the actual small wrappers with explicit upstream/UCI doubles;
+they cover disabled no-op, enabled->disabled cleanup, volatile-marker recreation
+and explicit failure propagation. They do not simulate successful VPN operation.
+The large resulting init file is a generated derivative of an upstream vendor
+script; it is intentionally not refactored to meet general new-code metrics.
+All new general-purpose files/functions remain within the project size limits.

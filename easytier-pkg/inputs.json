@@ -1,0 +1,42 @@
+{
+  "source_release": "https://github.com/EasyTier/luci-app-easytier/releases/tag/v2.6.4",
+  "source_commit": "bbe6b84f7270813c49ab9a8d0a6d69cfd86a8f74",
+  "source_signatures": "Each original has one signature; publisher key unavailable, not authenticated",
+  "archive": {
+    "url": "https://github.com/EasyTier/luci-app-easytier/releases/download/v2.6.4/EasyTier-v2.6.4-aarch64_generic-SNAPSHOT.zip",
+    "sha256": "8d9c037a515946f03e50a4ab8649613285f413200c15820fe00907aeaf882152",
+    "size": 23156008,
+    "members": [
+      "easytier-2.6.4.apk",
+      "easytier-noweb-2.6.4.apk",
+      "luci-app-easytier-2.6.4-r1.apk",
+      "luci-i18n-easytier-zh-cn-26.136.03667~39d7eda.apk"
+    ]
+  },
+  "packages": [
+    {
+      "name": "easytier",
+      "source_version": "2.6.4",
+      "version": "2.6.4-r1",
+      "arch": "aarch64_generic",
+      "filename": "easytier-2.6.4.apk",
+      "sha256": "762a2cada45a451e0efdb536d4a5097f04367679316de6355557f0212e90c5ad"
+    },
+    {
+      "name": "luci-app-easytier",
+      "source_version": "2.6.4-r1",
+      "version": "2.6.4-r2",
+      "arch": "noarch",
+      "filename": "luci-app-easytier-2.6.4-r1.apk",
+      "sha256": "3902befb24ce17e35ff5d5c3497f3d0dffdde3f41a0502bda691c315ad592c53"
+    },
+    {
+      "name": "luci-i18n-easytier-zh-cn",
+      "source_version": "26.136.03667~39d7eda",
+      "version": "26.136.03667~39d7eda-r1",
+      "arch": "noarch",
+      "filename": "luci-i18n-easytier-zh-cn-26.136.03667~39d7eda.apk",
+      "sha256": "b17ddd70b468549bb74b32cb29e36c03cb7a412a1caf8702d66735b8e74721b2"
+    }
+  ]
+}

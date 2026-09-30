@@ -1,0 +1,7 @@
+*
+!packaging/
+!packaging/**
+!easytier-pkg/
+!easytier-pkg/**
+packaging/__pycache__/
+easytier-pkg/__pycache__/
