@@ -1,0 +1,34 @@
+name: F50 load-only BPF diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout diagnostic source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install native compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc libc6-dev binutils
+      - name: Compile static ARM64 diagnostic
+        run: |
+          mkdir -p artifacts
+          gcc -static -O2 -Wall -Wextra -Werror -std=c11 tools/bpf-probe.c -o artifacts/bpf-probe
+          file artifacts/bpf-probe | tee artifacts/file.txt
+          readelf -h artifacts/bpf-probe > artifacts/elf-header.txt
+          gcc --version > artifacts/compiler.txt
+          sha256sum tools/bpf-probe.c artifacts/bpf-probe > artifacts/SHA256SUMS
+      - name: Upload diagnostic and build evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f50-bpf-probe
+          path: artifacts/
+          if-no-files-found: error

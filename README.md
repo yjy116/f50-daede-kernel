@@ -12,4 +12,6 @@ This repository contains build definitions and references to public sources. It 
 
 A successful build proves the recorded build checks only. Before installation, verify the complete device-specific boot image layout and keep a working rollback image. Hardware boot, USB, Wi-Fi, eBPF loading and actual proxy traffic still require tests on the F50. Stock OpenWrt 6.12 kernel modules and unrelated BTF packages must not be substituted for this kernel's own outputs.
 
+The separate manual **F50 load-only BPF diagnostic** workflow builds a static ARM64 `bpf-probe`. It loads small TC/cgroup programs, including `bpf_loop` callbacks, reads their JIT information and closes each descriptor. It does not attach or execute a program, create maps or network namespaces, or pin objects. A pass proves only these load/JIT checks, not CO-RE relocation or the complete dae datapath. Run with Linux BPF privileges and a short external timeout; `--help` is available without BPF access.
+
 Sources: [MU300 port](https://github.com/dikeckaan/mu300-linux), [dae requirements](https://github.com/daeuniverse/dae/blob/main/docs/en/README.md), [OpenWrt daede packaging](https://github.com/kenzok8/openwrt-daede).
