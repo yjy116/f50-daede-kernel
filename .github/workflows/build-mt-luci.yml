@@ -1,0 +1,26 @@
+name: F50 utility LuCI packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build and test utility packaging environment
+        run: docker build -f mt-luci/Dockerfile -t f50-mt-luci .
+      - name: Compile static core and sign exact LuCI payloads
+        run: |
+          mkdir -p artifacts
+          docker run --rm -v "$PWD/artifacts:/out" f50-mt-luci --output /out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-mt-luci
+          path: artifacts/
+          if-no-files-found: error

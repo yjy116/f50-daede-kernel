@@ -1,0 +1,888 @@
+{
+  "upstream_sources": [
+    {
+      "repo": "vernesong/OpenClash",
+      "commit": "22abb8ec08f08aac7924ce3c9c15a75def70badb",
+      "paths": {
+        "luci-app-openclash": "luci-app-openclash"
+      },
+      "archive_sha256": "076919f0c6feb9d0de4f6633ccf137b72c96bc17243a06f54271e458427a066c",
+      "archive": "vernesong--OpenClash--22abb8ec08f08aac7924ce3c9c15a75def70badb.tar.gz",
+      "files": [
+        {
+          "path": "sources/luci-app-openclash/tools/po2lmo/Makefile",
+          "source_path": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/luci-app-openclash/tools/po2lmo/Makefile",
+          "mode": "0o664",
+          "sha256": "3c0cfdbb944097c5ea95d3c67a0fe2dd873c0d4542a1abbdda5489ba4219fdd9",
+          "size": 227
+        },
+        {
+          "path": "sources/luci-app-openclash/tools/po2lmo/src/po2lmo",
+          "source_path": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/luci-app-openclash/tools/po2lmo/src/po2lmo",
+          "mode": "0o664",
+          "sha256": "d9a32f7e9e36cc6ecaebe1bfe1e27b429ef06a2938c7a1ea038b8ee61f2bb6a9",
+          "size": 19272
+        },
+        {
+          "path": "sources/luci-app-openclash/tools/po2lmo/src/po2lmo.c",
+          "source_path": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/luci-app-openclash/tools/po2lmo/src/po2lmo.c",
+          "mode": "0o664",
+          "sha256": "01427851b286270520f59426e253291cde67b798a0e890d53ee7eb963ac72914",
+          "size": 4715
+        },
+        {
+          "path": "sources/luci-app-openclash/tools/po2lmo/src/template_lmo.c",
+          "source_path": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/luci-app-openclash/tools/po2lmo/src/template_lmo.c",
+          "mode": "0o664",
+          "sha256": "6f6be2b39d72e0db664a7bd9201ec8e05cb65442a454f4ba85fc875082f25a66",
+          "size": 5884
+        },
+        {
+          "path": "sources/luci-app-openclash/tools/po2lmo/src/template_lmo.h",
+          "source_path": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/luci-app-openclash/tools/po2lmo/src/template_lmo.h",
+          "mode": "0o664",
+          "sha256": "b4ed73bb2f6b0e9734423326c129730a180bbfcf8638fa7080208f2c1f7a50e6",
+          "size": 2243
+        }
+      ]
+    },
+    {
+      "repo": "immortalwrt/luci",
+      "commit": "adc898b447eb4ee8023398182f5d0de2e8817e81",
+      "paths": {
+        "applications/luci-app-homeproxy": "luci-app-homeproxy",
+        "applications/luci-app-autoreboot": "luci-app-autoreboot",
+        "applications/luci-app-vlmcsd": "luci-app-vlmcsd"
+      },
+      "archive_sha256": "023c3b6a1936c596adf52be0e591321665474c597485d0635f4134387f182ad2",
+      "archive": "immortalwrt--luci--adc898b447eb4ee8023398182f5d0de2e8817e81.tar.gz",
+      "files": [
+        {
+          "path": "sources/luci-app-autoreboot/Makefile",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/Makefile",
+          "mode": "0o664",
+          "sha256": "596bcd2ea0bafc73dc4aae3ccb8ff291bc07873a0084ca2d0169ec0fab875991",
+          "size": 301
+        },
+        {
+          "path": "sources/luci-app-autoreboot/htdocs/luci-static/resources/view/autoreboot.js",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/htdocs/luci-static/resources/view/autoreboot.js",
+          "mode": "0o664",
+          "sha256": "a582588fca26bc8531e5036ad4b7cf7efec6e62f13f2d0fba24a5d96c2be1f13",
+          "size": 3417
+        },
+        {
+          "path": "sources/luci-app-autoreboot/po/templates/autoreboot.pot",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/po/templates/autoreboot.pot",
+          "mode": "0o664",
+          "sha256": "b5924826f99bc761b57539dbfdd865fed631e8baca2dd0c8a12ff1326f9d9ce4",
+          "size": 4848
+        },
+        {
+          "path": "sources/luci-app-autoreboot/po/zh_Hans/autoreboot.po",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/po/zh_Hans/autoreboot.po",
+          "mode": "0o664",
+          "sha256": "a1cb226c8492f00cca75b777445a8c5a73f025f5a77e453b3aee8c02b1299efd",
+          "size": 5445
+        },
+        {
+          "path": "sources/luci-app-autoreboot/root/etc/config/autoreboot",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/root/etc/config/autoreboot",
+          "mode": "0o664",
+          "sha256": "3ab4fa14a27907ca0c67b91c5e40c265f9fbf67c45e08cd4a2b22324a42e9211",
+          "size": 125
+        },
+        {
+          "path": "sources/luci-app-autoreboot/root/etc/init.d/autoreboot",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/root/etc/init.d/autoreboot",
+          "mode": "0o775",
+          "sha256": "8d0952f26608656911f8d66567b99d0e638c2c4fbc5b0dc13204833c592123a2",
+          "size": 854
+        },
+        {
+          "path": "sources/luci-app-autoreboot/root/etc/uci-defaults/99-luci-autoreboot-migrate",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/root/etc/uci-defaults/99-luci-autoreboot-migrate",
+          "mode": "0o664",
+          "sha256": "b6b895d3fced468ed6c4810c586eaffcad181338893ed465a6e10e583c632eba",
+          "size": 401
+        },
+        {
+          "path": "sources/luci-app-autoreboot/root/usr/share/luci/menu.d/luci-app-autoreboot.json",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/root/usr/share/luci/menu.d/luci-app-autoreboot.json",
+          "mode": "0o664",
+          "sha256": "1ae7dd6d088c0e81b06be6b6db8bec2ff37a4d8deadc1cb65c30d9f0a7851729",
+          "size": 234
+        },
+        {
+          "path": "sources/luci-app-autoreboot/root/usr/share/rpcd/acl.d/luci-app-autoreboot.json",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-autoreboot/root/usr/share/rpcd/acl.d/luci-app-autoreboot.json",
+          "mode": "0o664",
+          "sha256": "6027e84e400abd520046ef77a7ae3c9315a53459f0a838f573061eb2e8bc48bb",
+          "size": 182
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/Makefile",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/Makefile",
+          "mode": "0o664",
+          "sha256": "12c757833a86a6fedbfb66f248f07690d112c45df432b70846dba406adf31e8f",
+          "size": 319
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd.js",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/htdocs/luci-static/resources/view/vlmcsd.js",
+          "mode": "0o664",
+          "sha256": "a372c3cc946f663b6e0472d883ac9b6ececb71dcc7932b051425b9bda78a16e8",
+          "size": 2071
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/po/templates/vlmcsd.pot",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/po/templates/vlmcsd.pot",
+          "mode": "0o664",
+          "sha256": "a76a1da38b073dd2abfb13cc61417a2736ce59fc1284375027b7aaa3d7037368",
+          "size": 1770
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/po/zh_Hans/vlmcsd.po",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/po/zh_Hans/vlmcsd.po",
+          "mode": "0o664",
+          "sha256": "2ff81d8bc1fab03554f5a992ebc12ced163e037044eb313793f370dd4277c8d0",
+          "size": 2310
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/po/zh_Hant/vlmcsd.po",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/po/zh_Hant/vlmcsd.po",
+          "mode": "0o664",
+          "sha256": "db7999ca9e1e1e94d2b39d66f4e6b0b916a61657455c0cd3b4a255c9a34631a8",
+          "size": 2313
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/root/usr/share/luci/menu.d/luci-app-vlmcsd.json",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/root/usr/share/luci/menu.d/luci-app-vlmcsd.json",
+          "mode": "0o664",
+          "sha256": "a0b8793fbe8ac9506031329c44dfe82ab65d5174702baa211477ca00a008d52c",
+          "size": 206
+        },
+        {
+          "path": "sources/luci-app-vlmcsd/root/usr/share/rpcd/acl.d/luci-app-vlmcsd.json",
+          "source_path": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-vlmcsd/root/usr/share/rpcd/acl.d/luci-app-vlmcsd.json",
+          "mode": "0o664",
+          "sha256": "439a049192ea5d290aa9c901d9bb192b1bb12e5fb47986a067d42e78b8043829",
+          "size": 318
+        }
+      ]
+    },
+    {
+      "repo": "immortalwrt/packages",
+      "commit": "6d68ffeb270860be5d73ee2898d58e7c6019d9a4",
+      "paths": {
+        "net/vlmcsd": "vlmcsd"
+      },
+      "archive_sha256": "9db748f4e283ba766e54c2b732f67ddf5ffc630c81ce0a2992c5bab480f44903",
+      "archive": "immortalwrt--packages--6d68ffeb270860be5d73ee2898d58e7c6019d9a4.tar.gz",
+      "files": [
+        {
+          "path": "sources/vlmcsd/Makefile",
+          "source_path": "packages-6d68ffeb270860be5d73ee2898d58e7c6019d9a4/net/vlmcsd/Makefile",
+          "mode": "0o664",
+          "sha256": "445faf46fe37f35c3826fdd350f33ace58bdc55531e23b847f9dd4a25849f1a8",
+          "size": 1470
+        },
+        {
+          "path": "sources/vlmcsd/files/vlmcsd.conf",
+          "source_path": "packages-6d68ffeb270860be5d73ee2898d58e7c6019d9a4/net/vlmcsd/files/vlmcsd.conf",
+          "mode": "0o775",
+          "sha256": "ab011b377125ae4c9270014b9ea7e36f7547c4cfe7e18319d5785f77bdf503f4",
+          "size": 97
+        },
+        {
+          "path": "sources/vlmcsd/files/vlmcsd.ini",
+          "source_path": "packages-6d68ffeb270860be5d73ee2898d58e7c6019d9a4/net/vlmcsd/files/vlmcsd.ini",
+          "mode": "0o775",
+          "sha256": "e23d5d97921841f6c670460f97836ccd8f9c3a5c9aaf91255ae2f4f513f5a0da",
+          "size": 1545
+        },
+        {
+          "path": "sources/vlmcsd/files/vlmcsd.init",
+          "source_path": "packages-6d68ffeb270860be5d73ee2898d58e7c6019d9a4/net/vlmcsd/files/vlmcsd.init",
+          "mode": "0o775",
+          "sha256": "59929fcb7067666bf681d43f12248913a55d865beee8b670e4284166f0f3f9d2",
+          "size": 1959
+        }
+      ]
+    },
+    {
+      "repo": "Gevatter-Tod/luci-app-iperf3",
+      "commit": "6a1617fb70ba61805f13429c1e0f67eaab0afff6",
+      "paths": {
+        "": "luci-app-iperf3"
+      },
+      "archive_sha256": "a81780c0f2718eebc7d4f5ca0062c87c0e8697c12f9d3b641a955b64823b0902",
+      "archive": "Gevatter-Tod--luci-app-iperf3--6a1617fb70ba61805f13429c1e0f67eaab0afff6.tar.gz",
+      "files": [
+        {
+          "path": "sources/luci-app-iperf3/LICENSE",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/LICENSE",
+          "mode": "0o664",
+          "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+          "size": 18092
+        },
+        {
+          "path": "sources/luci-app-iperf3/Makefile",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/Makefile",
+          "mode": "0o664",
+          "sha256": "450feb250bfe88710c191c6864bccf868586a2ef73081cbb6dedfd75030efb5a",
+          "size": 308
+        },
+        {
+          "path": "sources/luci-app-iperf3/README.md",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/README.md",
+          "mode": "0o664",
+          "sha256": "86ce8ce670abff4b121113038bc676513062afbb3b0169478bc3cd8168743c98",
+          "size": 659
+        },
+        {
+          "path": "sources/luci-app-iperf3/htdocs/luci-static/resources/view/iperf3/index.js",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/htdocs/luci-static/resources/view/iperf3/index.js",
+          "mode": "0o664",
+          "sha256": "ea69382b0dc6abdb8440655e8ecfbfdc2606e2eb4b060fbb97d7c3bb3fc7ba2d",
+          "size": 4716
+        },
+        {
+          "path": "sources/luci-app-iperf3/root/etc/config/iperf3",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/root/etc/config/iperf3",
+          "mode": "0o664",
+          "sha256": "3ee5c3f3c0cbf7648754bde7e49ddfd5f01429af5d5f673ab711ae30dca9ebc2",
+          "size": 103
+        },
+        {
+          "path": "sources/luci-app-iperf3/root/usr/share/luci/menu.d/luci-app-iperf3.json",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/root/usr/share/luci/menu.d/luci-app-iperf3.json",
+          "mode": "0o664",
+          "sha256": "ec9f7491ca9c3657d0eae21a6a1ca2c9203b434b61ea07c8dd5d1b4406411cad",
+          "size": 252
+        },
+        {
+          "path": "sources/luci-app-iperf3/root/usr/share/rpcd/acl.d/luci-app-iperf3.json",
+          "source_path": "luci-app-iperf3-6a1617fb70ba61805f13429c1e0f67eaab0afff6/root/usr/share/rpcd/acl.d/luci-app-iperf3.json",
+          "mode": "0o664",
+          "sha256": "224f3db076ecd1bbef50b036384ac581651d4da472e820693016d334d80e8ddf",
+          "size": 520
+        }
+      ]
+    },
+    {
+      "repo": "Wind4/vlmcsd",
+      "commit": "e599080486478e219cd065e141d6de050a450c27",
+      "paths": {
+        "": "vlmcsd-core"
+      },
+      "archive_sha256": "752263dbfacc7ec1cd6c7dca8c56367f1693b3c8d8fe2786b756b322a35bb378",
+      "archive": "Wind4--vlmcsd--e599080486478e219cd065e141d6de050a450c27.tar.gz",
+      "files": [
+        {
+          "path": "sources/vlmcsd-core/.gitignore",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/.gitignore",
+          "mode": "0o664",
+          "sha256": "6d8d57a9821dfd656dd94796d773f88cf6ebf80ab8c45693e90ddc812a1beec0",
+          "size": 141
+        },
+        {
+          "path": "sources/vlmcsd-core/.gitmodules",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/.gitmodules",
+          "mode": "0o664",
+          "sha256": "9c558f9bef988a38d254aa118dc0e43a5ff7059a8cc95a4d04ed4d3723868c93",
+          "size": 172
+        },
+        {
+          "path": "sources/vlmcsd-core/GNUmakefile",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/GNUmakefile",
+          "mode": "0o664",
+          "sha256": "3845c996eb2eed346bb7f43481aa93c94c08efece90f5512b2f1661f4ea36462",
+          "size": 12811
+        },
+        {
+          "path": "sources/vlmcsd-core/Makefile",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/Makefile",
+          "mode": "0o664",
+          "sha256": "6a9ef9c9f28672235895d8726641ef9e9478a6ae89db924fa7d05d0910692708",
+          "size": 294
+        },
+        {
+          "path": "sources/vlmcsd-core/README",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/README",
+          "mode": "0o664",
+          "sha256": "d6ae3ab4482dcc157eeeda33c87793eb5d62cd67b163932e6e3f35d1eb5acbdf",
+          "size": 338
+        },
+        {
+          "path": "sources/vlmcsd-core/README.compile-and-pre-built-binaries",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/README.compile-and-pre-built-binaries",
+          "mode": "0o664",
+          "sha256": "aa2e03db909fdddbf5650cf9711230adf6c48557c5eed50483b429c9e3368b79",
+          "size": 4313
+        },
+        {
+          "path": "sources/vlmcsd-core/README.openssl",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/README.openssl",
+          "mode": "0o664",
+          "sha256": "2d5969e46f754071f29a39fc6bb74e813d2e4cb02a4a190c05f5da0f19f70a66",
+          "size": 2305
+        },
+        {
+          "path": "sources/vlmcsd-core/etc/vlmcsd.ini",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/etc/vlmcsd.ini",
+          "mode": "0o664",
+          "sha256": "a9acb44b1a61d695a65941244a9a6daaf92d1d66542d111181869c1667e0a035",
+          "size": 4892
+        },
+        {
+          "path": "sources/vlmcsd-core/etc/vlmcsd.kmd",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/etc/vlmcsd.kmd",
+          "mode": "0o664",
+          "sha256": "725773ff88cd7c3ad279a9f77fcb20cb0950b795600e3e419067eaa5cf24a41f",
+          "size": 15079
+        },
+        {
+          "path": "sources/vlmcsd-core/man/GNUmakefile",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/GNUmakefile",
+          "mode": "0o664",
+          "sha256": "e44f8b72ff0eecc2cc393347fad32d92675efd0ae3e1ab0c1bacf98ebb135ba9",
+          "size": 990
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcs.1",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcs.1",
+          "mode": "0o664",
+          "sha256": "b421a6bb47376a0ea4a07f6b489f06cf3ff2244e79c3141c0f3804698e8936c5",
+          "size": 13052
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcsd-floppy.7",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcsd-floppy.7",
+          "mode": "0o664",
+          "sha256": "a1553b75a799d57cadd7bc46449e08b0dc9a7ddfd71acf3db9d6617f599e8b32",
+          "size": 21650
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcsd.7",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcsd.7",
+          "mode": "0o664",
+          "sha256": "0369caf3f4428a382a7f6d5e7f353e2d06205f5dfc2e779ac9f50b78eb32ee41",
+          "size": 8992
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcsd.8",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcsd.8",
+          "mode": "0o664",
+          "sha256": "6a3f1f183050501191aa74267370790a365c602017915bbed7bdc107674b5348",
+          "size": 34095
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcsd.ini.5",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcsd.ini.5",
+          "mode": "0o664",
+          "sha256": "6fa3be6bd9868a5f67c6158b98106102d9770f4c02c89fe74cf6748a086dc395",
+          "size": 20720
+        },
+        {
+          "path": "sources/vlmcsd-core/man/vlmcsdmulti.1",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/man/vlmcsdmulti.1",
+          "mode": "0o664",
+          "sha256": "4b635a7e658b6bdd44859071720ccf4aa15d867c325c7d8dd8203a463fce5ad1",
+          "size": 2280
+        },
+        {
+          "path": "sources/vlmcsd-core/src/GNUmakefile",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/GNUmakefile",
+          "mode": "0o664",
+          "sha256": "2bf4b4c86a491a3e18709eb6ab3feb22f9b8532fa8df2131f036497210464be5",
+          "size": 17901
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer.idl",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer.idl",
+          "mode": "0o664",
+          "sha256": "3a8defad0012bb7eb6c7e2f776c9a91d9e86edbb83245f4da8a4f7a02547938e",
+          "size": 304
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer_c_mingw_gcc.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer_c_mingw_gcc.c",
+          "mode": "0o664",
+          "sha256": "116543c414f568032a96f0d90aa4414c1bd83a1b62852c39dbd59add4bce4a06",
+          "size": 8419
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer_c_x64_mingw_gcc.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer_c_x64_mingw_gcc.c",
+          "mode": "0o664",
+          "sha256": "c3e99d21066a9846fcda9d859d92a1e27cca3502b183b75077127a68330a0634",
+          "size": 18620
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer_h.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer_h.h",
+          "mode": "0o664",
+          "sha256": "e2bda14e355d4d921045c1ca9888d08f80fc0679b541d81c94951cbd4f99f6f8",
+          "size": 1965
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer_s2_mingw_gcc.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer_s2_mingw_gcc.c",
+          "mode": "0o664",
+          "sha256": "16ce1a0ced1ffe20c48687f0320d6fea5b930aa2bbbc710bf243c205352ef0c9",
+          "size": 8598
+        },
+        {
+          "path": "sources/vlmcsd-core/src/KMSServer_s2_x64_mingw_gcc.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/KMSServer_s2_x64_mingw_gcc.c",
+          "mode": "0o664",
+          "sha256": "d54b2a204fa96925cf276aedbfc4ac1861143753726f70104f3e34c3740dc90c",
+          "size": 18739
+        },
+        {
+          "path": "sources/vlmcsd-core/src/config.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/config.h",
+          "mode": "0o664",
+          "sha256": "14dd0e83f6181de2a412d47b413191b339192bbdb62a71d58e7c20ba26a119eb",
+          "size": 17189
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto.c",
+          "mode": "0o664",
+          "sha256": "1b91367cda1f682376ffa745d37a2e00bd710e905d36b67315a141ecbb50699e",
+          "size": 9933
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto.h",
+          "mode": "0o664",
+          "sha256": "4bf14e1b645581521d7362b5343b6347d8a43c0ab5cde377711e1b74521a77c6",
+          "size": 1476
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_internal.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_internal.c",
+          "mode": "0o664",
+          "sha256": "57780cc735f6cb5300fafc9becb7fb0bb2212061a5768f3f074ab3528279f878",
+          "size": 4991
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_internal.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_internal.h",
+          "mode": "0o664",
+          "sha256": "7dc710fd086c6cbd01018c8af6c31851e3fe1e12872d697e9aed4e4c54434dc8",
+          "size": 1083
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_openssl.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_openssl.c",
+          "mode": "0o664",
+          "sha256": "9478a1b0d8cba1c0db53af0522e67426f7244996bb3c2663e73824f25edf95bf",
+          "size": 6240
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_openssl.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_openssl.h",
+          "mode": "0o664",
+          "sha256": "32afa76c196d2391e6cfbc643613d9db317808dd25033276d956e5c30b14dee9",
+          "size": 1597
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_polarssl.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_polarssl.h",
+          "mode": "0o664",
+          "sha256": "fd2bc8bf0632b237790291f099a730022008284a5faa5538ba9d6e5dac155172",
+          "size": 1169
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_windows.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_windows.c",
+          "mode": "0o664",
+          "sha256": "2e7bcf88e64b404f7adc2efacc4f941bcbb7e81cc7a255640d5cd4569b2d337d",
+          "size": 4262
+        },
+        {
+          "path": "sources/vlmcsd-core/src/crypto_windows.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/crypto_windows.h",
+          "mode": "0o664",
+          "sha256": "50601bf0fb3705a5b1a4bfc427c36ef47f9ccba8fd6ac65d38c5e9b0717b95e5",
+          "size": 854
+        },
+        {
+          "path": "sources/vlmcsd-core/src/dns_srv.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/dns_srv.c",
+          "mode": "0o664",
+          "sha256": "560697bdf4b32e8de93295c8a08249637ecacc68829f1d61a6cb76ec852b0b8b",
+          "size": 8510
+        },
+        {
+          "path": "sources/vlmcsd-core/src/dns_srv.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/dns_srv.h",
+          "mode": "0o664",
+          "sha256": "9b82e9c7d24458c1d4e86fb9b1ba8142df67ea0ed8406e7c89988d0453c90700",
+          "size": 3449
+        },
+        {
+          "path": "sources/vlmcsd-core/src/endian.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/endian.c",
+          "mode": "0o664",
+          "sha256": "3d264b64ea2b65b7cd3ab42d35046f81db5bef080647447e0d3cc3c908172bc5",
+          "size": 4439
+        },
+        {
+          "path": "sources/vlmcsd-core/src/endian.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/endian.h",
+          "mode": "0o664",
+          "sha256": "25a5259701d3533123f699b731c2587e2273c3e84d31d2ce3c859b4e69dc0530",
+          "size": 6549
+        },
+        {
+          "path": "sources/vlmcsd-core/src/getifaddrs-musl.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/getifaddrs-musl.c",
+          "mode": "0o664",
+          "sha256": "29a7e45f8c4b51966329655db579ae87442acb9ef7af2dad09c91ec82b9b4db4",
+          "size": 7430
+        },
+        {
+          "path": "sources/vlmcsd-core/src/helpers.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/helpers.c",
+          "mode": "0o664",
+          "sha256": "210c5dfdd7d4867e6bc28f1aa053085b43401ba6005b1a7e6ed1e6364352bc73",
+          "size": 17381
+        },
+        {
+          "path": "sources/vlmcsd-core/src/helpers.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/helpers.h",
+          "mode": "0o664",
+          "sha256": "ef66bf779b99a146afec1111e636c0e937fd3b57ef17687f10891e66de8b4a71",
+          "size": 2194
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ifaddrs-android.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ifaddrs-android.c",
+          "mode": "0o664",
+          "sha256": "2e5450ed79c43fd34baff23be1227e4fd3eb96f51d2a7cc40bf01a4801a034b4",
+          "size": 18725
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ifaddrs-android.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ifaddrs-android.h",
+          "mode": "0o664",
+          "sha256": "040e185040db09f772a81ad6f6a985b4f7b692818d22cbfd2acead803d6c571c",
+          "size": 1925
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ifaddrs-musl.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ifaddrs-musl.h",
+          "mode": "0o664",
+          "sha256": "c5dd001d8e7e55e3029bcdfe06f798a36f18460f370328e9261dce385772fb58",
+          "size": 748
+        },
+        {
+          "path": "sources/vlmcsd-core/src/kms.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/kms.c",
+          "mode": "0o664",
+          "sha256": "df88f6e13b584f9652bc0bba3ef3e2702170e492b9983d686abdd431477fd598",
+          "size": 35596
+        },
+        {
+          "path": "sources/vlmcsd-core/src/kms.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/kms.h",
+          "mode": "0o664",
+          "sha256": "0a0eb7d8ef5493865b1761ac4da1ec484e044e8904c9783d0e560aefad4a3d1d",
+          "size": 10670
+        },
+        {
+          "path": "sources/vlmcsd-core/src/kmsdata-full.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/kmsdata-full.c",
+          "mode": "0o664",
+          "sha256": "a6f39c236b062b3cf42ee7d1a9ac1a77d9711e095ff21b37fe7db991b1544ef1",
+          "size": 122846
+        },
+        {
+          "path": "sources/vlmcsd-core/src/kmsdata.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/kmsdata.c",
+          "mode": "0o664",
+          "sha256": "14cccb7a82079b5f38041e451c4ecba3456b04ab453b48e168c7f65d0fa8405c",
+          "size": 147465
+        },
+        {
+          "path": "sources/vlmcsd-core/src/kmsdata.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/kmsdata.h",
+          "mode": "0o664",
+          "sha256": "d73f0011ee574b9ab240419066f5582452fca5629a1a84ca9fd20b4c376c2c8a",
+          "size": 301
+        },
+        {
+          "path": "sources/vlmcsd-core/src/libkms-test.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/libkms-test.c",
+          "mode": "0o664",
+          "sha256": "cb545a913550f6ff08e73249b2e6fc41d05e7f0c26060484116489c7e1965f94",
+          "size": 1292
+        },
+        {
+          "path": "sources/vlmcsd-core/src/libkms.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/libkms.c",
+          "mode": "0o664",
+          "sha256": "0ddfeec95385687a327a86f89716d28885580d5335380de8737692bee865b4ea",
+          "size": 4296
+        },
+        {
+          "path": "sources/vlmcsd-core/src/libkms.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/libkms.h",
+          "mode": "0o664",
+          "sha256": "232c3beddc483048a6d1cde6d98210e5bcb24801d210ff026f8177292d8552b1",
+          "size": 1330
+        },
+        {
+          "path": "sources/vlmcsd-core/src/msrpc-client.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/msrpc-client.c",
+          "mode": "0o664",
+          "sha256": "3937b0db1d4a32e8386d8fb32dc426fbc579c6b3395dc19efffdc8232be66eeb",
+          "size": 4279
+        },
+        {
+          "path": "sources/vlmcsd-core/src/msrpc-client.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/msrpc-client.h",
+          "mode": "0o664",
+          "sha256": "5b266e07b9a9eef2503753136efb33acfc88c474a5648633f9265612172f9080",
+          "size": 726
+        },
+        {
+          "path": "sources/vlmcsd-core/src/msrpc-server.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/msrpc-server.c",
+          "mode": "0o664",
+          "sha256": "0e2448ae14e93a4f306d94a97f80c046ed2cfb3517fb3129f41b4891f33ca230",
+          "size": 7327
+        },
+        {
+          "path": "sources/vlmcsd-core/src/msrpc-server.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/msrpc-server.h",
+          "mode": "0o664",
+          "sha256": "a3f8369066313d2b6764b0ce27c719785d598986ce1d30fa1479b97e02636ca8",
+          "size": 122
+        },
+        {
+          "path": "sources/vlmcsd-core/src/nameser.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/nameser.h",
+          "mode": "0o664",
+          "sha256": "d2d8b34890e34b2c4e6afd648f0901bdda20c2d26f68c0a3da1b01b9210975d8",
+          "size": 23411
+        },
+        {
+          "path": "sources/vlmcsd-core/src/nameser_compat.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/nameser_compat.h",
+          "mode": "0o664",
+          "sha256": "4a096156f89d38d27128beae8ee558a5c1d79135c277b5b0c2e7aa8f03587ece",
+          "size": 9123
+        },
+        {
+          "path": "sources/vlmcsd-core/src/netlink-musl.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/netlink-musl.h",
+          "mode": "0o664",
+          "sha256": "46d2b6dabbfa0756eb3de0b3a48d8e9a1a8fab675655487d5f21bfa1a4e988db",
+          "size": 2510
+        },
+        {
+          "path": "sources/vlmcsd-core/src/network.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/network.c",
+          "mode": "0o664",
+          "sha256": "0f12e7d455434de24e9a4fffbd43a6b1b65757772e726e95e7c690061840e665",
+          "size": 26052
+        },
+        {
+          "path": "sources/vlmcsd-core/src/network.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/network.h",
+          "mode": "0o664",
+          "sha256": "74169dbd49496cf41c9e3b3bc8f7a04d11aa6f674cf496a45b8d6239ad02dad1",
+          "size": 1140
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ns_name.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ns_name.c",
+          "mode": "0o664",
+          "sha256": "07331e0864352c824ab6e09e7531c0b881bc531605c30172d664d31b06ec561c",
+          "size": 7558
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ns_name.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ns_name.h",
+          "mode": "0o664",
+          "sha256": "6a62e3a31ef25d858694ee708344e928fa58fd57c5f419102ccc1ec8662de296",
+          "size": 169
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ns_parse.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ns_parse.c",
+          "mode": "0o664",
+          "sha256": "b3d5b5c2518067ba3f71d32a2a98b4a8df4fd572ff4c13702e94b4fcf7957c28",
+          "size": 5167
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ns_parse.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ns_parse.h",
+          "mode": "0o664",
+          "sha256": "80452da8e011cc68de52f74bebc4bdc0285188abea9d5b636e0423c1acfbfb57",
+          "size": 2211
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ntservice.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ntservice.c",
+          "mode": "0o664",
+          "sha256": "979e6a960c9be3f610094d54ed887a3b9a459825b096b569af435beb0408f8c5",
+          "size": 8424
+        },
+        {
+          "path": "sources/vlmcsd-core/src/ntservice.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/ntservice.h",
+          "mode": "0o664",
+          "sha256": "a592fabe55d26ff2f934e702e454015c6a39874604864588e9f8291c7b240a59",
+          "size": 647
+        },
+        {
+          "path": "sources/vlmcsd-core/src/output.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/output.c",
+          "mode": "0o664",
+          "sha256": "338329dc87f6e6419819b5a01682e116f75432b7746f71e0c6ba9d97d377750d",
+          "size": 13740
+        },
+        {
+          "path": "sources/vlmcsd-core/src/output.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/output.h",
+          "mode": "0o664",
+          "sha256": "e9c27d9ddae0da4146f75e125ed6b0242c0ff59752d1f5ecc64e6aface2d1741",
+          "size": 935
+        },
+        {
+          "path": "sources/vlmcsd-core/src/resolv.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/resolv.h",
+          "mode": "0o664",
+          "sha256": "705c85a6a6114a0c70ce3d7f76dd917b0dca6ec8b3506c24b88ac7d7688a699d",
+          "size": 20763
+        },
+        {
+          "path": "sources/vlmcsd-core/src/resolv_static.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/resolv_static.h",
+          "mode": "0o664",
+          "sha256": "7b58312aa8f655d17ba77528c191a884a623997f60c80bb30ce93404d6a91a17",
+          "size": 898
+        },
+        {
+          "path": "sources/vlmcsd-core/src/rpc.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/rpc.c",
+          "mode": "0o664",
+          "sha256": "8713bfcd4f82934ff77d1ae7cc62ffb811a6b5d7ac22287076f328557c6fe88e",
+          "size": 37181
+        },
+        {
+          "path": "sources/vlmcsd-core/src/rpc.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/rpc.h",
+          "mode": "0o664",
+          "sha256": "4a816a72ae0c7d63c45b473e7e9f50ce275fa58463048f2ecfc2b42a9691f526",
+          "size": 8663
+        },
+        {
+          "path": "sources/vlmcsd-core/src/shared_globals.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/shared_globals.c",
+          "mode": "0o664",
+          "sha256": "ce3dc76273e241d77378075d3b2a87f87e249f62e935d01adf89d4861322ae6c",
+          "size": 3753
+        },
+        {
+          "path": "sources/vlmcsd-core/src/shared_globals.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/shared_globals.h",
+          "mode": "0o664",
+          "sha256": "53101f93a463cfcdf2926a449fbe6bc16efbf6617148995a9f84a607956ba8d8",
+          "size": 4991
+        },
+        {
+          "path": "sources/vlmcsd-core/src/tap-windows.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/tap-windows.h",
+          "mode": "0o664",
+          "sha256": "6aa819b9a7eb1a2e466a14ef5c8555aa9c0c8c2d4214419d410aed9f5f814fe9",
+          "size": 2885
+        },
+        {
+          "path": "sources/vlmcsd-core/src/types.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/types.h",
+          "mode": "0o664",
+          "sha256": "42322f7243aa288554949e612e0f9fca7c4ae233f597aa68246134013ae85ad8",
+          "size": 9047
+        },
+        {
+          "path": "sources/vlmcsd-core/src/vlmcs.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/vlmcs.c",
+          "mode": "0o664",
+          "sha256": "33f4f11bd4610f4a72e4869dbdb03c81d8bb9b07db415c2396208cc74d0ed975",
+          "size": 35880
+        },
+        {
+          "path": "sources/vlmcsd-core/src/vlmcs.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/vlmcs.h",
+          "mode": "0o664",
+          "sha256": "dff3e0cd8b56a53ab4e6e5f13f1e8f6048591e75ea45066caedde53732b20531",
+          "size": 623
+        },
+        {
+          "path": "sources/vlmcsd-core/src/vlmcsd.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/vlmcsd.c",
+          "mode": "0o664",
+          "sha256": "9d3bbfc247de541849ee604d2aaf8f40ff63921aa69bf9d385baa2845357ab22",
+          "size": 47912
+        },
+        {
+          "path": "sources/vlmcsd-core/src/vlmcsd.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/vlmcsd.h",
+          "mode": "0o664",
+          "sha256": "6a623cfcb2f21665a58799a3087f16de79dfe88939be332435a53a0ddc03475b",
+          "size": 1639
+        },
+        {
+          "path": "sources/vlmcsd-core/src/vlmcsdmulti.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/vlmcsdmulti.c",
+          "mode": "0o664",
+          "sha256": "80d07a262d6821738413f97fdea70a0024f6a4572409fff74bece0a2ad73eea4",
+          "size": 2621
+        },
+        {
+          "path": "sources/vlmcsd-core/src/wingetopt.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/wingetopt.c",
+          "mode": "0o664",
+          "sha256": "c5b27c8600f2bcf7d0221c4c5b8d0a2c2193ce43f4e110a0d9f69b8793facde2",
+          "size": 1532
+        },
+        {
+          "path": "sources/vlmcsd-core/src/wingetopt.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/wingetopt.h",
+          "mode": "0o664",
+          "sha256": "37e6a290f3a0b35016ae33e3adc278908fa551132d0e53a2b685934b608a8463",
+          "size": 509
+        },
+        {
+          "path": "sources/vlmcsd-core/src/wintap.c",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/wintap.c",
+          "mode": "0o664",
+          "sha256": "980744940de0cf561171b2529a5fdff7f3e99678f3039f6e5fdd61bb621450c9",
+          "size": 9976
+        },
+        {
+          "path": "sources/vlmcsd-core/src/wintap.h",
+          "source_path": "vlmcsd-e599080486478e219cd065e141d6de050a450c27/src/wintap.h",
+          "mode": "0o664",
+          "sha256": "065d63e3a893415e3230f33f231cb1fec5cc1f28a6ea1f653845e98d1f46c14c",
+          "size": 1263
+        }
+      ]
+    }
+  ],
+  "f50_changes": [
+    "iperf3 index.js: strict reverse flag, no empty argument, command status/stderr, absolute killall, save before execute",
+    "iperf3 po/zh_Hans/iperf3.po: new local Chinese translation",
+    "vlmcsd built statically on native ARM64 Alpine musl; original init and disabled configuration retained",
+    "APK3 packaging, exact version dependencies, config registration and separate Chinese packages"
+  ],
+  "device_tested": false,
+  "cloud_built": false
+}

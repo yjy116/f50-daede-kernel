@@ -1,0 +1,49 @@
+F50 MT3600BE companion packages (host/cloud build; no device operations)
+
+Run from repository root on an ARM64 runner:
+  docker build -f mt-luci/Dockerfile -t f50-mt-luci .
+  docker run --rm -v /absolute/empty-output:/out f50-mt-luci --output /out
+
+The pinned multiarch Alpine base is used natively on ARM64. The builder rejects
+other host architectures. It builds Wind4 vlmcsd e599080 with musl and -static,
+checks readelf Machine=AArch64 and absence of INTERP/NEEDED, and executes -V only.
+Compiler stdout/stderr and tool versions are retained, not swallowed. There is
+no daemon startup or test listener during the cloud build.
+
+Seven APKs share one temporary signing key: autoreboot/iperf3/vlmcsd LuCI apps,
+their three Chinese language packages, and the static vlmcsd core. po2lmo is built
+from fixed Apache-2.0 source. UI, translations, binaries, modes, ownership,
+timestamps, scripts, metadata and exact dependencies are parsed back from APKs
+and compared before signature verification. The private key exists only under
+/dev/shm and is never exported; the public key belongs only in a temporary
+installation keys directory. There are no fake kernel/module provides.
+
+Run focused local checks:
+  node --test mt-luci/test_*.cjs
+  python3 -B -m unittest discover -s mt-luci -p 'test_*.py'
+Backend tests are bounded by timeout 60s inside the Docker build.
+
+Sources under vendor retain upstream licensing notices. source-lock.json binds
+every source byte, including the explicitly reviewed F50 iperf3 changes.
+provenance.json separately records original source commits and file SHA256s.
+The iperf3 UI now uses reverse only for UCI '1', never sends an empty argument,
+checks real exit status/stderr, saves validated form edits before execution,
+and uses the ACL's absolute killall path. Stop retains upstream's stop-all-iperf3
+semantics. No system-wide RPC policy is changed. It has no automatic startup.
+
+Package installation uses standard OpenWrt default_postinst, which may enable
+init links, invoke package UCI defaults and call init start. autoreboot schedules
+are disabled and vlmcsd enabled/auto_activate/internet_access are all 0 in the
+original default configuration. Existing user configurations are not reset.
+Existing enabled settings therefore remain meaningful; the installer must
+inspect them before an upgrade. autoreboot start updates its tagged cron rows;
+vlmcsd stop/reload can restart dnsmasq. These actions are not simulated by build.
+Chinese language installation only registers the existing zh_cn language label.
+
+The core retains the feed's libpthread dependency although statically linked.
+The UI depends exactly on this custom core. iperf3 UI depends exactly on the
+reviewed official iperf3=3.20-r1. LuCI/RPC package dependencies remain explicit.
+All configurations are listed in .conffiles and .conffiles_static metadata.
+
+Actual APK installation, firewall/DNS invariance, cron state, native program
+runtime and browser verification remain separate device acceptance steps.

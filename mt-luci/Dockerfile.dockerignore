@@ -1,0 +1,7 @@
+**
+!packaging/
+!packaging/**
+!mt-luci/
+!mt-luci/**
+**/__pycache__/
+**/*.pyc

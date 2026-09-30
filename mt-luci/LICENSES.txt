@@ -1,0 +1,20 @@
+Sources are preserved under mt-luci/vendor in the build repository.
+
+LuCI autoreboot and vlmcsd views: Apache-2.0, ImmortalWrt LuCI commit
+adc898b447eb4ee8023398182f5d0de2e8817e81; original headers are retained.
+
+LuCI iperf3: GPL-2.0, Gevatter-Tod commit
+6a1617fb70ba61805f13429c1e0f67eaab0afff6; upstream LICENSE is retained.
+F50 changes repair command result handling and add a Chinese translation.
+
+vlmcsd: Wind4 commit e599080486478e219cd065e141d6de050a450c27.
+ImmortalWrt packages commit 6d68ffeb270860be5d73ee2898d58e7c6019d9a4
+declares PKG_LICENSE=MIT. This source snapshot has no top-level LICENSE file;
+the package metadata follows that feed declaration and does not claim an
+independent license audit. Embedded BSD/ISC notices remain in the full sources.
+The static binary also incorporates Alpine musl; its MIT license is available
+in Alpine's musl source. Exact installed compiler/library versions are captured
+in the build manifest.
+
+po2lmo: Apache-2.0, Jo-Philipp Wich; compiler sources taken unchanged from
+OpenClash commit 22abb8ec08f08aac7924ce3c9c15a75def70badb.

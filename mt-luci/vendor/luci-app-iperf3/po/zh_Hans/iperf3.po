@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "iPerf3"
+msgstr "iPerf3 测速"
+
+msgid "This is the iPerf3 configuration page."
+msgstr "配置并运行 iPerf3 网络测速。"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Server"
+msgstr "服务器"
+
+msgid "The iPerf3 server to connect to."
+msgstr "要连接的 iPerf3 服务器地址。"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "The port to use for the iPerf3 connection."
+msgstr "iPerf3 连接使用的端口。"
+
+msgid "Reverse"
+msgstr "反向测速"
+
+msgid "Run in reverse mode."
+msgstr "由服务器向本机发送数据。"
+
+msgid "Start Client Mode"
+msgstr "客户端模式"
+
+msgid "Start iPerf3 Client"
+msgstr "开始测速"
+
+msgid "Start Server Mode"
+msgstr "服务端模式"
+
+msgid "Start iPerf3 Server"
+msgstr "启动测速服务"
+
+msgid "Stop iperf3"
+msgstr "停止 iPerf3"
+
+msgid "Stop iPerf3 Server"
+msgstr "停止测速服务"
+
+msgid "iPerf3 Test Results"
+msgstr "iPerf3 测速结果"
+
+msgid "running... Will take a bit..."
+msgstr "正在测速，请稍候…"
+
+msgid "Dismiss"
+msgstr "关闭"
+
+msgid "Invalid command response"
+msgstr "命令返回的数据无效"
+
+msgid "Command failed"
+msgstr "命令执行失败"
+
+msgid "Failed to start iPerf3 test: "
+msgstr "iPerf3 测速失败："
+
+msgid "iPerf3 server started successfully"
+msgstr "iPerf3 测速服务已启动"
+
+msgid "Failed to start iPerf3 server: "
+msgstr "无法启动 iPerf3 测速服务："
+
+msgid "iPerf3 stopped successfully"
+msgstr "iPerf3 已停止"
+
+msgid "Failed to stop iPerf3 server: "
+msgstr "无法停止 iPerf3："
