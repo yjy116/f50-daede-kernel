@@ -1,0 +1,81 @@
+Purpose and scope
+=================
+Sign the exact public luci-theme-aurora 1.4.0-r20260920 release APK without
+extracting, rebuilding, changing version/dependencies or executing its scripts.
+The optional Aurora configuration application and its Chinese package are not
+included. Existing LuCI Chinese translations continue to supply translated UI.
+
+Fixed input
+===========
+https://github.com/eamonxg/luci-theme-aurora/releases/tag/v1.4.0
+Source commit: 84c27b66952e6fc4be60128067a6b88bfd34afb5 (Apache-2.0).
+Exact download URL, 184843-byte size and SHA256 are in input.json. The SHA256
+matches the GitHub release asset digest. This is source pinning to the public
+publisher, not an upstream package signature: the input has zero signature
+blocks. Generic OpenWrt maintainer metadata does not imply OpenWrt endorsement.
+
+Compatibility and installation effects
+======================================
+The APK is APK3/ADBd, noarch; dependencies are libc and luci-base only. It ships
+ucode templates and local CSS/JS/fonts, no init service. Upstream's build workflow
+includes OpenWrt 25.12.5; its template API matches the official 25.12.5 LuCI feed
+commit 128a7812f4be233c5dd7f7466f534fd888785caf. Actual browser rendering is still
+a device acceptance step, not established by static checks.
+
+The original post-install script calls default_postinst, then clears LuCI caches
+and reloads rpcd. Its 30_luci-theme-aurora uci-defaults script registers Aurora
+and sets luci.main.mediaurlbase=/luci-static/aurora on a non-upgrade install if
+luci.themes.Aurora does not already exist. The original upgrade script exports
+PKG_UPGRADE=1. The original removal hook does not restore a previous theme.
+Before device installation, preserve the prior LuCI configuration with no
+pending changes. A rollback must restore the prior mediaurlbase before removing
+Aurora. These device actions are outside this builder.
+
+Theme defaults are usable without /etc/config/aurora or the optional app; the
+default navigation is mega-menu. Matching a particular sidebar/color preset
+can require a small Aurora configuration later. The app would additionally add
+configuration migration, upload/marketplace/feed management and remote update
+notices, none of which is necessary for the basic theme.
+
+Signing and strict evidence
+===========================
+Alpine 3.23.6 is pinned by container digest; apk-tools is pinned to 3.0.8-r0.
+Other installed tool versions are recorded in manifest.json. No private signing
+material is input. A fresh EC P-256 key is generated with private permissions in
+/dev/shm, the container's ephemeral tmpfs; only the public key, APK,
+manifest and SHA256SUMS leave the container. Signing cannot reproduce identical
+APK bytes across builds because each build intentionally uses a new key.
+
+apk adbsign --allow-untrusted is used ONLY inside the build container on the
+already SHA256-checked unsigned upstream APK. The APK is never installed or its
+scripts executed. Output verification uses --keys-dir with only the new public
+key, --no-network and no --allow-untrusted. Device verification/installation
+must likewise authenticate the artifacts and use a temporary isolated keys-dir;
+do not copy a trust bypass to the device or invent any kernel/provider package.
+
+The reader verifies every payload hash/size and compares all parsed metadata,
+files, directories/modes/owners, symlinks, scripts and package fields exactly.
+Only outer APK size/SHA and signature-block count may differ. Additionally the
+decompressed header and every complete aligned non-signature block must remain
+byte-identical, including metadata/data/padding. There must be exactly one new
+signature and apk verify must pass. No derived metadata hash is exempted.
+manifest.json records these comparisons, input/output hashes, complete metadata
+and file manifests, public script hashes/sizes and actual tool versions.
+
+apk-tools v3.0.8 source evidence
+==============================
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/app_adbsign.c
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/doc/apk-adbsign.8.scd
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/adb_comp.c
+adbsign copies metadata/data and recompresses the container; deflate:0 selects
+ADBd with the default compression level. It can report a per-file failure while
+returning zero, so this builder signs ONE file per process and independently
+requires signature verification plus parsed and byte comparisons afterwards.
+
+Validation
+==========
+Local unit tests exercise preservation checks and mutation rejection without
+pretending to sign an APK. The Docker build repeats those tests under Linux.
+The manual workflow then performs the real download/sign/verify/audit and emits
+PASS only after all those commands and comparisons succeed. No local Docker,
+actual signing success or device visual result is implied by unit-test success.

@@ -1,0 +1,6 @@
+*
+!packaging/
+!packaging/apk3.py
+!theme-aurora/
+!theme-aurora/**
+theme-aurora/__pycache__/

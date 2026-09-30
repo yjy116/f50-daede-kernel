@@ -1,0 +1,29 @@
+name: F50 Aurora theme signature
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout reviewed signer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build and test signature audit environment
+        run: docker build -f theme-aurora/Dockerfile -t f50-theme-aurora .
+      - name: Sign the pinned original APK and verify exact contents
+        run: |
+          mkdir -p theme-aurora-artifacts
+          docker run --rm \
+            -v "$PWD/theme-aurora-artifacts:/out" f50-theme-aurora --output /out
+      - name: Upload signed APK, public key and audit evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-theme-aurora
+          path: theme-aurora-artifacts/
+          if-no-files-found: error
