@@ -1,0 +1,24 @@
+{
+  "openclash": {
+    "url": "https://codeload.github.com/vernesong/OpenClash/tar.gz/22abb8ec08f08aac7924ce3c9c15a75def70badb",
+    "filename": "openclash-22abb8ec08f08aac7924ce3c9c15a75def70badb.tar.gz",
+    "sha256": "076919f0c6feb9d0de4f6633ccf137b72c96bc17243a06f54271e458427a066c",
+    "commit": "22abb8ec08f08aac7924ce3c9c15a75def70badb",
+    "prefix": "OpenClash-22abb8ec08f08aac7924ce3c9c15a75def70badb/",
+    "version": "0.47.167"
+  },
+  "mihomo": {
+    "url": "https://github.com/MetaCubeX/mihomo/releases/download/v1.19.31/mihomo-linux-arm64-v1.19.31.gz",
+    "filename": "mihomo-linux-arm64-v1.19.31.gz",
+    "sha256": "9e0f11afbf38426b8bd88fdc594678f8161c57eccb4e1b77acb12b493904f1d4",
+    "binary_sha256": "1b315bc038d05f84ee86d232f3c3d2b020b5044e9b971bb8fe215b6e6a2148f3",
+    "version": "1.19.31",
+    "commit": "ab405bad5beeeac8b003bb01f60f134f6df54471"
+  },
+  "mihomo_source": {
+    "url": "https://codeload.github.com/MetaCubeX/mihomo/tar.gz/ab405bad5beeeac8b003bb01f60f134f6df54471",
+    "filename": "mihomo-ab405bad5beeeac8b003bb01f60f134f6df54471.tar.gz",
+    "sha256": "adb7a6e4207e8ca44567330e1d563163112787d3044d848305b2bfeff0282590",
+    "prefix": "mihomo-ab405bad5beeeac8b003bb01f60f134f6df54471/"
+  }
+}

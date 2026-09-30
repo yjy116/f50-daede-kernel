@@ -1,0 +1,36 @@
+name: F50 OpenClash and Mihomo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Retrieve fixed successful kernel evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 36672813155 --repo yjy116/f50-daede-kernel --name f50-kernel-7.2.8 --dir kernel-evidence
+          printf '%s  %s\n' ba58a7af264857e5254165ef4de240bf15dcf3b6a709f8f916a097fc71dbbf05 kernel-evidence/kernel-validation.json | sha256sum --check --strict -
+      - name: Build and test package builder
+        run: docker build -f openclash-pkg/Dockerfile -t f50-openclash .
+      - name: Build OpenClash and verify Mihomo core
+        run: |
+          mkdir -p artifacts
+          docker run --rm -v "$PWD/kernel-evidence:/evidence:ro" \
+            -v "$PWD/artifacts:/out" f50-openclash \
+            --kernel-validation /evidence/kernel-validation.json \
+            --kernel-config /evidence/kernel.config --output /out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-openclash
+          path: artifacts/
+          if-no-files-found: error

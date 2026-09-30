@@ -1,0 +1,7 @@
+**
+!packaging/
+!packaging/**
+!openclash-pkg/
+!openclash-pkg/**
+**/__pycache__/
+**/*.pyc
