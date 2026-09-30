@@ -98,7 +98,10 @@ def audit_package(source, candidate, expected):
     info = {key: value for key, value in candidate['info'].items() if key not in DERIVED}
     required = {key: value for key, value in expected_info(source['info']).items()
                 if key not in DERIVED}
-    require(info == required, 'Unexpected backend metadata change')
+    differences = {key: {'expected': required.get(key), 'actual': info.get(key)}
+                   for key in sorted(info.keys() | required.keys())
+                   if info.get(key) != required.get(key)}
+    require(not differences, f'Unexpected backend metadata change: {json.dumps(differences)}')
     installed_size = sum(f['size'] for f in expected['files'].values() if f['type'] == 'regular')
     require(candidate['info']['installed-size'] == installed_size,
             'Backend installed size mismatch')
