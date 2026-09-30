@@ -1,0 +1,64 @@
+F50 official core package adaptations
+=====================================
+Only nlbwmon and tailscale are rebuilt. They come from the official OpenWrt
+25.12.5 aarch64_generic packages feed; inputs.json pins the exact URL, APK SHA256,
+upstream binary hash, signed-index hash, metadata hash and public-key SHA256.
+The original APKs have no standalone signature. Their index signatures and
+metadata-to-payload hash chains were verified before these inputs were pinned.
+
+Exact permitted changes:
+- nlbwmon 2025.06.02~29236be6-r1 -> 2025.06.02~29236be6_p1-r1;
+  remove only kmod-nf-conntrack-netlink.
+- tailscale 1.98.3-r1 -> 1.98.3_p1-r1; remove only kmod-tun.
+- Append an explicit F50 adaptation description and add one new package signature.
+- APK identity hash is recomputed; all other metadata, every directory/file ACL,
+  owner, timestamp, symlink target, payload hash and lifecycle script must match.
+No fake kmod or kernel/provider package is created. There is no kernel change.
+
+Actual kernel.config is hash/size bound to a PASS validation report for
+7.2.8-f50-dae1. CONFIG_TUN, CONFIG_NF_CT_NETLINK, CONFIG_NF_CONNTRACK and
+CONFIG_NF_CONNTRACK_EVENTS must all be y. A missing/m/n value fails the build.
+The signed output uses a fresh private key held only in container /dev/shm. Only
+the public key and authenticated outputs leave the container. verify uses an
+isolated keys directory, no network, and no --allow-untrusted. That flag is only
+used for cloud extraction AFTER the original exact input SHA256 is checked.
+No payload or lifecycle script is executed by this packager.
+
+Default startup is intentionally preserved
+=========================================
+nlbwmon's original post-install starts/enables its accounting daemon. Its init
+does not have a UCI enabled switch. It counts conntrack flows and writes its
+database, not persistent network/firewall/DNS configuration.
+tailscale's original post-install starts/enables tailscaled. Its init has no UCI
+enabled switch, invokes tailscaled --cleanup and launches the daemon on UDP
+41641 with its state file and nftables mode. Installation does not run tailscale
+login/up or supply credentials. Existing state, if present, can affect behavior;
+the parent must confirm the intended unregistered state and compare live routes,
+DNS and firewall state after installation. Static package checks do not prove
+the absence of runtime route changes.
+
+The official luci-app-tailscale-community and matching Chinese package do not
+replace tailscale's init or config; they remain separate original packages.
+Their explicit Auto Configure Firewall action can create a tailscale interface,
+ACCEPT zone, bidirectional LAN forwarding and masquerading. Merely installing
+the UI does not invoke that action. Do not invoke it as part of package setup.
+
+Build contract
+==============
+docker build -f mt-plugins/Dockerfile -t f50-mt-plugins .
+Container arguments:
+  --kernel-validation /evidence/kernel-validation.json
+  --kernel-config /evidence/kernel.config --output /out
+Optional --input-dir supplies a cache of the exact original APK filenames.
+The parent owns the manual workflow and deployment. This directory neither
+connects to the device nor commits/publishes the repository.
+The pinned Alpine image supplies apk-tools 3.0.8-r0. The build runs mutation tests
+with a 60-second timeout, then performs real extraction/mkpkg/signature verification
+and exact source-to-output audits. Local Python tests are not a cloud-build result.
+
+Deliberately excluded
+=====================
+sing-box's kmod-inet-diag package also covers INET_UDP_DIAG and INET_RAW_DIAG,
+which are disabled in the reviewed kernel; this builder does not remove that
+dependency or claim equivalent capability. SQM is excluded by user direction.
+No third-party EasyTier/asvow payload or key is included.

@@ -1,0 +1,7 @@
+*
+!packaging/
+!packaging/**
+!mt-plugins/
+!mt-plugins/**
+packaging/__pycache__/
+mt-plugins/__pycache__/

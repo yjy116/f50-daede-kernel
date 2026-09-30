@@ -1,0 +1,47 @@
+{
+  "scope": "F50 nlbwmon/Tailscale metadata-only adaptation; preserve original daemon startup",
+  "container": "alpine:3.23.6@sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8c010a0",
+  "apk_tools": "3.0.8-r0",
+  "packages": [
+    {
+      "name": "nlbwmon",
+      "source_version": "2025.06.02~29236be6-r1",
+      "version": "2025.06.02~29236be6_p1-r1",
+      "arch": "aarch64_generic",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/nlbwmon-2025.06.02~29236be6-r1.apk",
+      "sha256": "04af7df7a6c63e5874802a6a12b6dfb80366bea6e0d446e240ff58692a1a3679",
+      "binary_path": "usr/sbin/nlbwmon",
+      "binary_sha256": "2c1957d721dd31473d36d973aba4037fbed0a2b3dd1450e7669160ab9b7b2189",
+      "symlinks": {
+        "usr/sbin/nlbw": "nlbwmon"
+      },
+      "source_authentication": {
+        "method": "Official signed-index binding verified before input pinning",
+        "index_url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/packages.adb",
+        "index_sha256": "19aeea63ab1ba94a6f40424f77e5f8dff80870e6a61b5d4483b605cb8989be1b",
+        "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
+        "package_metadata_sha256": "ee4f7d415dafa7813e9eb8b2872d54c7473951ec8b6d0952440cb462d63632f3"
+      }
+    },
+    {
+      "name": "tailscale",
+      "source_version": "1.98.3-r1",
+      "version": "1.98.3_p1-r1",
+      "arch": "aarch64_generic",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/tailscale-1.98.3-r1.apk",
+      "sha256": "862cd20cb6960e5ed699664017a0bc9a7435510d7b535d0dd9e61740c8eb4dfa",
+      "binary_path": "usr/sbin/tailscaled",
+      "binary_sha256": "8a38ebed4000ef0e0cb0a88245ebfbd54d541768aaa9b3dd4e99cefb5b23a07a",
+      "symlinks": {
+        "usr/sbin/tailscale": "tailscaled"
+      },
+      "source_authentication": {
+        "method": "Official signed-index binding verified before input pinning",
+        "index_url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/packages.adb",
+        "index_sha256": "19aeea63ab1ba94a6f40424f77e5f8dff80870e6a61b5d4483b605cb8989be1b",
+        "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
+        "package_metadata_sha256": "2c8ee0c7d25755d6af6f5c26fe3c709d05fa1befeb830a11b8bec5683ca81d4e"
+      }
+    }
+  ]
+}
