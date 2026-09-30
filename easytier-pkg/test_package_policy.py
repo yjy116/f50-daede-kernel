@@ -16,7 +16,7 @@ class PackagePolicyTests(unittest.TestCase):
             'directories': {'': {'mode': 493}}, 'scripts': {'post-install': b'original'},
             'package_fields': {}, 'signature_blocks': 1,
         }
-        self.options = {'name': 'luci-app-easytier', 'version': '2.6.4-r2',
+        self.options = {'name': 'luci-app-easytier', 'version': '2.6.4-r3',
                         'patched_init': b'patched', 'init_size_delta': 3}
         self.candidate = dict(copy.deepcopy(self.source),
                               info=expected_info(self.source['info'], self.options),
@@ -46,8 +46,8 @@ class PackagePolicyTests(unittest.TestCase):
         core = dict(self.source['info'], name='easytier', depends=['kmod-tun', 'libc'])
         self.assertEqual(expected_info(core, {'name': 'easytier', 'version': '2.6.4-r1'})['depends'], ['libc'])
         zh = dict(core, name='luci-i18n-easytier-zh-cn', depends=['libc', 'luci-app-easytier'])
-        options = {'name': zh['name'], 'version': '26.136.03667~39d7eda-r1'}
-        self.assertEqual(expected_info(zh, options)['depends'], ['libc', 'luci-app-easytier=2.6.4-r2'])
+        options = {'name': zh['name'], 'version': '26.136.03667~39d7eda-r2'}
+        self.assertEqual(expected_info(zh, options)['depends'], ['libc', 'luci-app-easytier=2.6.4-r3'])
 
 
 if __name__ == '__main__':

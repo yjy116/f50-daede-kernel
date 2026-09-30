@@ -9,7 +9,7 @@ from package_audit import read_config, verify_config_binding
 
 INIT_PATH = 'etc/init.d/easytier'
 CORE_VERSION = '2.6.4-r1'
-UI_VERSION = '2.6.4-r2'
+UI_VERSION = '2.6.4-r3'
 DESCRIPTION = '; F50 adaptation: TUN builtin, paired core, reviewed disabled-start/stop and launcher-log fixes; see packaging-manifest.json'
 
 

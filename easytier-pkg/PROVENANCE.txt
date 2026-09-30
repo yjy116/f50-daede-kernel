@@ -19,10 +19,10 @@ only public key/APKs/manifest/checksums/diff are exported. No device-side
 Metadata allowlist
 ==================
 easytier 2.6.4 -> 2.6.4-r1: remove only kmod-tun, retaining libc.
-luci-app-easytier 2.6.4-r1 -> 2.6.4-r2: remove only kmod-tun; add exact paired
+luci-app-easytier 2.6.4-r1 -> 2.6.4-r3: remove only kmod-tun; add exact paired
 easytier=2.6.4-r1 so a normal installation supplies the reviewed core.
-Chinese 26.136.03667~39d7eda -> 26.136.03667~39d7eda-r1: require exact paired
-luci-app-easytier=2.6.4-r2. Each description explicitly identifies F50 adaptation.
+Chinese 26.136.03667~39d7eda -> 26.136.03667~39d7eda-r2: require exact paired
+luci-app-easytier=2.6.4-r3. Each description explicitly identifies F50 adaptation.
 Dependencies use apk's canonical sorted order; membership remains exact.
 Only the APK identity hash and the exact changed init size may be recomputed.
 Every other dependency/field, payload file, ACL/owner/mtime, directory and all
@@ -89,3 +89,12 @@ and explicit failure propagation. They do not simulate successful VPN operation.
 The large resulting init file is a generated derivative of an upstream vendor
 script; it is intentionally not refactored to meet general new-code metrics.
 All new general-purpose files/functions remain within the project size limits.
+
+Persistent VPN menu audit (UI r3, translation r2)
+==============================================
+The exact pinned original already registers admin/vpn and admin/vpn/easytier.
+Its Lua controller and all template links already use VPN; no services route
+exists in those payload files. Preserve these bytes. routes.py checks the VPN
+parent and child, every registered controller route, every url/build_url link,
+and rejects old services paths or unregistered internal links. Build manifest
+exports every checked route and reference. The sole payload patch remains init.

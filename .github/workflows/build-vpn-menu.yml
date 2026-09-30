@@ -1,0 +1,26 @@
+name: F50 Tailscale VPN menu
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build and test menu adapter
+        run: docker build -f vpn-menu-pkg/Dockerfile -t f50-vpn-menu .
+      - name: Sign verified Tailscale menu packages
+        run: |
+          mkdir -p artifacts
+          docker run --rm -v "$PWD/artifacts:/out" f50-vpn-menu --output /out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-vpn-menu
+          path: artifacts/
+          if-no-files-found: error

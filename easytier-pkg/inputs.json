@@ -25,7 +25,7 @@
     {
       "name": "luci-app-easytier",
       "source_version": "2.6.4-r1",
-      "version": "2.6.4-r2",
+      "version": "2.6.4-r3",
       "arch": "noarch",
       "filename": "luci-app-easytier-2.6.4-r1.apk",
       "sha256": "3902befb24ce17e35ff5d5c3497f3d0dffdde3f41a0502bda691c315ad592c53"
@@ -33,7 +33,7 @@
     {
       "name": "luci-i18n-easytier-zh-cn",
       "source_version": "26.136.03667~39d7eda",
-      "version": "26.136.03667~39d7eda-r1",
+      "version": "26.136.03667~39d7eda-r2",
       "arch": "noarch",
       "filename": "luci-i18n-easytier-zh-cn-26.136.03667~39d7eda.apk",
       "sha256": "b17ddd70b468549bb74b32cb29e36c03cb7a412a1caf8702d66735b8e74721b2"

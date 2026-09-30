@@ -1,0 +1,26 @@
+{
+  "source": "OpenWrt 25.12.5 official aarch64_generic LuCI feed",
+  "authentication": "Original APKs are unsigned; exact hashes were authenticated against the official signed index in the second-batch audit. This build checks those pinned hashes and signs the adapted output.",
+  "packages": [
+    {
+      "name": "luci-app-tailscale-community",
+      "source_version": "26.270.72870~a24d1f2",
+      "version": "26.270.72870~a24d1f2-r1",
+      "arch": "noarch",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/luci/luci-app-tailscale-community-26.270.72870~a24d1f2.apk",
+      "sha256": "53e9f58e00fd6ed6f2908e68244b009e019dae9ad57782c3a74ab950af29fea9",
+      "size": 11009,
+      "signed_index_metadata_sha256": "a971506f5d74cc9900ed5b177c86c485392f8f1d722bb6ab20048756073493e3"
+    },
+    {
+      "name": "luci-i18n-tailscale-community-zh-cn",
+      "source_version": "26.270.72870~a24d1f2",
+      "version": "26.270.72870~a24d1f2-r1",
+      "arch": "noarch",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/luci/luci-i18n-tailscale-community-zh-cn-26.270.72870~a24d1f2.apk",
+      "sha256": "af5eea3d3b563f6efee77dc45e922042c437d0d8c261573a778daebe2298cd56",
+      "size": 3987,
+      "signed_index_metadata_sha256": "c2bc21c4dff12d8e6e2a8ef8e223bd1c8c226ee866142dd435304e252845cd08"
+    }
+  ]
+}

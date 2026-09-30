@@ -1,0 +1,7 @@
+*
+!packaging/
+!packaging/**
+!vpn-menu-pkg/
+!vpn-menu-pkg/**
+packaging/__pycache__/
+vpn-menu-pkg/__pycache__/
