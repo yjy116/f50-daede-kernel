@@ -1,4 +1,4 @@
-"""Mutation tests for the two explicitly reviewed metadata adaptations."""
+"""Mutation tests for the explicitly reviewed metadata adaptations."""
 import copy
 import hashlib
 import unittest
@@ -23,6 +23,13 @@ class MetadataTests(unittest.TestCase):
     def test_only_reviewed_dependency_removed(self):
         self.assertEqual(self.candidate['info']['depends'], ['ca-bundle', 'libc'])
         audit_package(self.source, self.candidate, self.policy)
+
+    def test_conntrack_library_preserves_all_userspace_dependencies(self):
+        policy = {'name': 'libnetfilter-conntrack3', 'version': '1.1.0_p1-r1'}
+        info = {'name': policy['name'], 'version': '1.1.0-r1', 'description': 'Library',
+                'depends': ['kmod-nf-conntrack-netlink', 'libc', 'libmnl0', 'libnfnetlink0']}
+        self.assertEqual(expected_info(info, policy)['depends'],
+                         ['libc', 'libmnl0', 'libnfnetlink0'])
 
     def test_changed_payload_scripts_or_extra_metadata_fails(self):
         for field in ('files', 'directories', 'scripts', 'package_fields'):

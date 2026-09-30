@@ -8,7 +8,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'packaging'))
 from apk3 import require
 from package_audit import read_config, verify_config_binding
 
-REMOVED = {'nlbwmon': 'kmod-nf-conntrack-netlink', 'tailscale': 'kmod-tun'}
+REMOVED = {'nlbwmon': 'kmod-nf-conntrack-netlink', 'tailscale': 'kmod-tun',
+           'libnetfilter-conntrack3': 'kmod-nf-conntrack-netlink'}
 BUILTINS = {'kmod-tun': ['CONFIG_TUN'],
             'kmod-nf-conntrack-netlink': ['CONFIG_NF_CT_NETLINK', 'CONFIG_NF_CONNTRACK',
                                         'CONFIG_NF_CONNTRACK_EVENTS']}

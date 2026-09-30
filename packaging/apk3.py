@@ -15,6 +15,7 @@ INFO_FIELDS = ('name version hashes description arch license origin maintainer u
 SCRIPT_FIELDS = ('trigger pre-install post-install pre-deinstall post-deinstall '
                  'pre-upgrade post-upgrade').split()
 DEPENDENCY_FIELDS = {'depends', 'provides', 'replaces', 'install-if', 'recommends'}
+LIST_FIELDS = DEPENDENCY_FIELDS | {'tags'}
 
 
 def require(condition, message):
@@ -79,6 +80,15 @@ def dependency(value):
     return name + ('=' + version if version else '')
 
 
+def tags(value):
+    require(isinstance(value, list) and value and value[0] is None, 'Invalid tags array')
+    require(all(isinstance(row, bytes) for row in value[1:]), 'Invalid tags element')
+    result = [text(row) for row in value[1:]]
+    require(all(row and not any(c.isspace() or c == '\0' for c in row) for row in result),
+            'Tags cannot round-trip through apk token syntax')
+    return result
+
+
 def info_values(values):
     result = {}
     require(len(values) <= len(INFO_FIELDS) + 1, 'Unknown package info fields')
@@ -88,11 +98,13 @@ def info_values(values):
             continue
         if name in DEPENDENCY_FIELDS:
             value = [dependency(row) for row in value[1:]]
+        elif name == 'tags':
+            value = tags(value)
         elif name in ('hashes', 'repo-commit'):
             value = value.hex()
         elif isinstance(value, bytes):
             value = text(value)
-        require(name in DEPENDENCY_FIELDS or not isinstance(value, list),
+        require(name in LIST_FIELDS or not isinstance(value, list),
                 f'Unsupported structured info field {name}')
         result[name] = value
     return result

@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from apk3 import acl, blocks, decode, dependency, member_record, safe_path, verify_data
+from apk3 import INFO_FIELDS, acl, blocks, decode, dependency, info_values, member_record, safe_path, verify_data
 from repack import package_arguments
 
 
@@ -43,6 +43,19 @@ class ReaderTests(unittest.TestCase):
             self.assertIn('depends:libc daed=1_p1-r1', args)
             self.assertFalse(any('installed-size:' in item or 'hashes:' in item for item in args))
             self.assertEqual((Path(directory) / 'scripts/post-install').read_bytes(), body)
+
+    def test_tags_array_is_preserved_and_serialized_as_apk_tokens(self):
+        values = [None] * (len(INFO_FIELDS) + 1)
+        values[INFO_FIELDS.index('tags') + 1] = [None, b'openwrt:abiversion=3']
+        info = info_values(values)
+        self.assertEqual(info, {'tags': ['openwrt:abiversion=3']})
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(package_arguments(info, {}, Path(directory)),
+                             ['--info', 'tags:openwrt:abiversion=3'])
+        for invalid in ([None, [None, b'nested']], [None, 123], [None, b'a b']):
+            values[-1] = invalid
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                info_values(values)
 
     def test_symlink_metadata_is_exact_without_a_data_block(self):
         member = [None, b'zerotier-cli', [None, 511, b'root', b'root'],

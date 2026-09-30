@@ -1,7 +1,8 @@
 F50 official core package adaptations
 =====================================
-Only nlbwmon and tailscale are rebuilt. They come from the official OpenWrt
-25.12.5 aarch64_generic packages feed; inputs.json pins the exact URL, APK SHA256,
+Only nlbwmon, tailscale and libnetfilter-conntrack3 are rebuilt. They come from
+the official OpenWrt 25.12.5 aarch64_generic base/packages feeds; inputs.json pins
+the exact URL, APK SHA256,
 upstream binary hash, signed-index hash, metadata hash and public-key SHA256.
 The original APKs have no standalone signature. Their index signatures and
 metadata-to-payload hash chains were verified before these inputs were pinned.
@@ -10,6 +11,8 @@ Exact permitted changes:
 - nlbwmon 2025.06.02~29236be6-r1 -> 2025.06.02~29236be6-r2;
   remove only kmod-nf-conntrack-netlink.
 - tailscale 1.98.3-r1 -> 1.98.3_p1-r1; remove only kmod-tun.
+- libnetfilter-conntrack3 1.1.0-r1 -> 1.1.0_p1-r1; remove only
+  kmod-nf-conntrack-netlink, retaining libc, libmnl0 and libnfnetlink0.
 - Append an explicit F50 adaptation description and add one new package signature.
 - APK identity hash is recomputed; all other metadata, every directory/file ACL,
   owner, timestamp, symlink target, payload hash and lifecycle script must match.
@@ -26,6 +29,10 @@ No payload or lifecycle script is executed by this packager.
 
 Default startup is intentionally preserved
 =========================================
+libnetfilter-conntrack3 contains a library, its symlink and package file list;
+it has no daemon, init or UCI defaults. Its original lifecycle scripts remain.
+Its tags=["openwrt:abiversion=3"] metadata is retained, using apk-tools'
+schema_tags_array token serialization (apk_adb.c tags_fromstring), not discarded.
 nlbwmon's original post-install starts/enables its accounting daemon. Its init
 does not have a UCI enabled switch. It counts conntrack flows and writes its
 database, not persistent network/firewall/DNS configuration.

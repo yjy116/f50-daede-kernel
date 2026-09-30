@@ -1,4 +1,4 @@
-"""Repackage only nlbwmon/Tailscale metadata; never install or execute their payloads."""
+"""Repackage reviewed F50 core metadata; never install or execute payloads."""
 import argparse
 import json
 import os

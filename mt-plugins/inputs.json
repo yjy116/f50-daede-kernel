@@ -1,5 +1,5 @@
 {
-  "scope": "F50 nlbwmon/Tailscale metadata-only adaptation; preserve original daemon startup",
+  "scope": "F50 nlbwmon/Tailscale/libnetfilter-conntrack3 metadata-only adaptation; preserve original payload and startup",
   "container": "alpine:3.23.6@sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8c010a0",
   "apk_tools": "3.0.8-r0",
   "packages": [
@@ -41,6 +41,26 @@
         "index_sha256": "19aeea63ab1ba94a6f40424f77e5f8dff80870e6a61b5d4483b605cb8989be1b",
         "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
         "package_metadata_sha256": "2c8ee0c7d25755d6af6f5c26fe3c709d05fa1befeb830a11b8bec5683ca81d4e"
+      }
+    },
+    {
+      "name": "libnetfilter-conntrack3",
+      "source_version": "1.1.0-r1",
+      "version": "1.1.0_p1-r1",
+      "arch": "aarch64_generic",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/base/libnetfilter-conntrack3-1.1.0-r1.apk",
+      "sha256": "ae514d72c15ce8f0f2415c329dab1f82f3989679a4bfed23dd44faceb2635e5e",
+      "binary_path": "usr/lib/libnetfilter_conntrack.so.3.8.0",
+      "binary_sha256": "713f6030f3ea893a113ff253146ddb08804c71657912860a6ad1d55153c78fe3",
+      "symlinks": {
+        "usr/lib/libnetfilter_conntrack.so.3": "libnetfilter_conntrack.so.3.8.0"
+      },
+      "source_authentication": {
+        "method": "Official signed-index binding verified before input pinning",
+        "index_url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/base/packages.adb",
+        "index_sha256": "227cee9402c0e6a842b418a02df5538982a98fffad47428404cb994b7232dbba",
+        "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
+        "package_metadata_sha256": "9a2ea78afe94c7016fab1129b0cbe985df3636e9de621cfbcb07dbda517df523"
       }
     }
   ]

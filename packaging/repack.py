@@ -11,7 +11,7 @@ import sys
 import tempfile
 import urllib.request
 
-from apk3 import DEPENDENCY_FIELDS, read_package, require
+from apk3 import LIST_FIELDS, read_package, require
 from package_audit import (audit_repack, expected_info, verify_default_disabled,
                            verify_kernel_evidence)
 
@@ -77,7 +77,7 @@ def package_arguments(info, scripts, directory):
     for key, value in info.items():
         if key in DERIVED_FIELDS:
             continue
-        if key in DEPENDENCY_FIELDS:
+        if key in LIST_FIELDS:
             value = ' '.join(value)
         arguments.extend(['--info', f'{key}:{value}'])
     script_directory = directory / 'scripts'
