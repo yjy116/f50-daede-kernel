@@ -22,7 +22,7 @@ def expected_info(info):
     dependencies.remove('kmod-tun')
     require(not {'firewall4', 'jshn'} & set(dependencies), 'Unexpected existing control dependency')
     dependencies.extend(['firewall4', 'jshn'])
-    return dict(info, version=VERSION, depends=dependencies, origin='f50/zerotier-backend',
+    return dict(info, version=VERSION, depends=sorted(dependencies), origin='f50/zerotier-backend',
                 description=info['description'] + DESCRIPTION)
 
 

@@ -45,7 +45,7 @@ class BackendPackageTests(unittest.TestCase):
     def test_kernel_dependency_removed_and_fw4_dependency_explicit(self):
         info = expected_info(self.source['info'])
         self.assertEqual(info['version'], '1.16.0_p2-r1')
-        self.assertEqual(info['depends'], ['libc', 'firewall4', 'jshn'])
+        self.assertEqual(info['depends'], ['firewall4', 'jshn', 'libc'])
         self.assertIn('F50', info['description'])
 
     def test_apk_installed_size_excludes_symlink_target_bytes(self):

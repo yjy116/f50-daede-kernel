@@ -45,15 +45,6 @@ test('new firewall controls default off while existing networks remain enabled',
     assert.equal(global.options.find(o => o.name === 'copy_config_path')?.default, '0');
 });
 
-test('configuration styling is enclosed in its own view and loads only its stylesheet', async () => {
-    const { view } = configurationHarness();
-    const rendered = await view.render();
-    assert.equal(rendered.attributes.class, 'zerotier-view');
-    assert.equal(rendered.children[0].tag, 'link');
-    assert.equal(rendered.children[0].attributes.href, '/luci-static/resources/zerotier/appearance.css');
-    assert.equal(rendered.children[1].tag, 'div');
-});
-
 test('render and an empty secret edit preserve the existing identity without exposing it', async () => {
     const currentIdentity = 'sensitive-test-identity';
     const writes = [];

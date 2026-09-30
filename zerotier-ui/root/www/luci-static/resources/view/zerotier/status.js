@@ -8,7 +8,6 @@
 'require view';
 'require zerotier.common as common';
 'require zerotier.runtime as runtime';
-'require zerotier.appearance as appearance';
 
 const POLL_SECONDS = 5;
 
@@ -42,8 +41,7 @@ function renderResult(result) {
 		return E('div', { class: 'alert-message warning' }, [_('状态读取失败：'), result.error.message]);
 	if (!result.data.running)
 		return E('p', {}, _('服务未运行。请在配置页启用 ZeroTier 并保存应用。'));
-	return E('div', { class: 'cbi-section zerotier-interface-card' },
-		[nodeTable(result.data), E('h3', {}, _('网络状态')), networkTable(result.data.networks)]);
+	return E('div', {}, [nodeTable(result.data), E('h3', {}, _('网络状态')), networkTable(result.data.networks)]);
 }
 
 return view.extend({
@@ -52,12 +50,12 @@ return view.extend({
 		const content = E('div', {}, renderResult(result));
 		const refresh = async function() { dom.content(content, renderResult(await runtime.statusResult())); };
 		poll.add(refresh, POLL_SECONDS);
-		return appearance.wrap(E('div', { class: 'cbi-map' }, [
+		return E('div', { class: 'cbi-map' }, [
 			E('h2', {}, _('ZeroTier 接口信息')),
 			E('p', { class: 'cbi-map-descr' }, _('服务运行不等于网络已授权。此页只读取状态，不加入或退出网络；每 5 秒刷新一次。')),
 			E('button', { class: 'btn cbi-button', click: ui.createHandlerFn(this, refresh) }, _('刷新状态')),
 			content
-		]));
+		]);
 	},
 	handleSaveApply: null,
 	handleSave: null,

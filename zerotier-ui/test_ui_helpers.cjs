@@ -43,12 +43,9 @@ function configurationHarness(data = {}) {
     const sections = [];
     const form = formBoundary(sections, data);
     const common = loadModule('zerotier/common.js', { baseclass: { extend: x => x } });
-    const appearance = loadModule('zerotier/appearance.js', {
-        baseclass: { extend: x => x }, E: element, L: { resource: name => '/luci-static/resources/' + name }
-    });
     const runtime = { statusSection(map) { return map.section(form.TypedSection); } };
     const view = loadModule('view/zerotier/config.js', {
-        form, common, runtime, appearance, view: { extend: x => x }, E: element, _: x => x,
+        form, common, runtime, view: { extend: x => x }, E: element, _: x => x,
         window: { open() { throw new Error('Unexpected navigation during render'); } }
     });
     return { sections, view };

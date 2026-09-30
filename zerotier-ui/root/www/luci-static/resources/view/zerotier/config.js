@@ -7,7 +7,6 @@
 'require view';
 'require zerotier.common as common';
 'require zerotier.runtime as runtime';
-'require zerotier.appearance as appearance';
 
 const CENTRAL_URL = 'https://my.zerotier.com/network';
 
@@ -117,6 +116,6 @@ return view.extend({
 		runtime.statusSection(map);
 		globalSection(map);
 		networkSection(map);
-		return map.render().then(appearance.wrap);
+		return map.render();
 	}
 });
