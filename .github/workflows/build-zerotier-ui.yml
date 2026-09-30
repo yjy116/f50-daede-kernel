@@ -1,0 +1,28 @@
+name: F50 Chinese ZeroTier LuCI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout reviewed UI
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build and test packaging environment
+        run: docker build -f zerotier-ui/Dockerfile -t f50-zerotier-ui .
+      - name: Package, audit and sign with a temporary key
+        run: |
+          mkdir -p zerotier-ui-artifacts
+          docker run --rm -v "$PWD/zerotier-ui-artifacts:/out" f50-zerotier-ui --output /out
+      - name: Upload signed APK and public audit evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-zerotier-ui
+          path: zerotier-ui-artifacts/
+          if-no-files-found: error

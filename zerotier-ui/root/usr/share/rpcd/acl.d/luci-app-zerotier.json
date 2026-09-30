@@ -1,0 +1,14 @@
+{
+  "luci-app-zerotier": {
+    "description": "F50 ZeroTier configuration and read-only status",
+    "read": {
+      "file": {
+        "/usr/bin/zerotier-cli -j info": ["exec"],
+        "/usr/bin/zerotier-cli -j listnetworks": ["exec"]
+      },
+      "ubus": {"service": ["list"]},
+      "uci": ["zerotier"]
+    },
+    "write": {"uci": ["zerotier"]}
+  }
+}

@@ -1,0 +1,7 @@
+*
+!packaging/
+!packaging/**
+!zerotier-ui/
+!zerotier-ui/**
+**/__pycache__/
+**/*.pyc

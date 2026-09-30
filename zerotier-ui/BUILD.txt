@@ -1,0 +1,44 @@
+F50 ZeroTier 中文 LuCI：VPN → ZeroTier → 配置 / 运行状态
+
+任务追踪复用 F50/.codex-tasks/f50-openwrt/TODO.csv 第12项；不另建重复台账。
+源界面取自 ImmortalWrt luci commit d6167ea0645cbd1327708d85f94824f42d0eb872，
+路径 applications/luci-app-zerotier。GPL-3.0-only 及原版权头保留。
+
+适配范围
+- global: enabled、port；NamedSection global，类型 zerotier。
+- network: id、allow_managed、allow_global、allow_default、allow_dns。
+- managed 默认1，其余开关默认0；rmempty=false确保关闭写0。
+- 不显示官方后端不读取的 network.enabled 或 fw_*。
+- 不读取 identity.secret，不提供 secret 表单；仅CLI公开状态投影。
+- 保留既有的其它UCI选项；不自动创建/删除配置节或示例网络。
+- 如有自定义持久配置目录，其旧networks.d文件不会随UCI表项删除而被清理。
+- 保存应用使用LuCI标准流程。官方init的procd_add_reload_trigger zerotier收到
+  config.change后调用reload_service，stop/start按global.enabled生效。
+- 状态只读：service.list；zerotier-cli -j info；zerotier-cli -j listnetworks。
+  ACL只授权两条完整命令，不授权裸CLI或join/leave/set。未知/失败响应显示错误。
+
+构建（仓库根目录）
+  docker build -f zerotier-ui/Dockerfile -t f50-zerotier-ui .
+  docker run --rm -v /absolute/empty/output:/out f50-zerotier-ui --output /out
+独立Dockerfile.dockerignore覆盖仓库根忽略规则，未改动通用packaging源码。
+同等云入口：Actions → F50 Chinese ZeroTier LuCI → Run workflow。
+
+包名 luci-app-zerotier，版本1.0.0_p1-r1，架构noarch；_p1为F50适配版本，
+description/origin及manifest明确F50身份。精确依赖zerotier=1.16.0_p1-r1，
+另依赖luci-base与rpcd-mod-file。不是官方OpenWrt或ImmortalWrt二进制发行包。
+实际apk mkpkg使用apk-tools3.0.8-r0/compat3.0.0_pre1/deflate:0；比较每个文件
+内容SHA、模式、所有者、mtime、目录ACL、脚本字节与依赖，再验证包签名。
+每轮ECDSA私钥仅保存在容器/dev/shm，输出仅APK、公钥、manifest和SHA256SUMS。
+
+安装行为
+post-install/post-upgrade调用OpenWrt标准add_group_and_user/default_postinst。
+包内没有init脚本、配置文件或uci-defaults，不启动/启用/加入ZeroTier网络。
+然后清除可再生成的LuCI缓存并重启rpcd/uhttpd使菜单/ACL生效；网页会短暂中断，
+登录会话可能需刷新。失败明确返回，未用“|| true”隐藏。
+
+验证
+  node --test zerotier-ui/test_ui.cjs
+  python3 -B -m unittest discover -s zerotier-ui -p 'test_package.py'
+本地测试覆盖ID和重复项、CLI失败与JSON结构、权限和菜单、APK审计拒绝变异。
+云构建通过仅证明包构建/签名/静态审计。实际安装、浏览器渲染、保存应用、服务
+重载触发、用户自己的网络授权/IP与通信仍需设备验收，不能由静态测试替代。
