@@ -42,6 +42,8 @@ ZeroTier additionally has exactly two relative symlinks: usr/bin/zerotier-cli
 and usr/bin/zerotier-idtool point to zerotier-one. Their target blob, type, mode,
 owner, size and mtime must match; they have no data blocks. Unknown link sets,
 devices, hardlinks, noncanonical targets and xattr formats fail explicitly.
+apk extract skips symlink mtimes; the repacker restores the reviewed timestamp
+on each symlink itself with follow_symlinks=False before the full payload audit.
 --compat 3.0.0_pre1 preserves all original parent-directory records and is readable
 by device apk 3.0.5. deflate:0 preserves the ADBd encoding used by our reader.
 SOURCE_DATE_EPOCH is removed for apk calls to prevent overwriting file mtimes.

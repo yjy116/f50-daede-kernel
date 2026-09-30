@@ -89,6 +89,19 @@ def package_arguments(info, scripts, directory):
     return arguments
 
 
+def preserve_link_times(root, files):
+    # apk-tools fs_fsys.c intentionally skips symlink mtimes during extraction.
+    for name, member in files.items():
+        if member['type'] != 'symlink':
+            continue
+        path = root / name
+        require(path.is_symlink() and os.readlink(path) == member['target'],
+                f'Extracted symlink differs: {name}')
+        timestamp = member['mtime']
+        os.utime(path, (timestamp, timestamp), follow_symlinks=False)
+        require(path.lstat().st_mtime == timestamp, f'Symlink mtime not restored: {name}')
+
+
 def adapt_package(spec, context):
     temporary, options, policy = context['temporary'], context['options'], context['policy']
     source_path = obtain_input(spec, options, temporary)
@@ -104,6 +117,7 @@ def adapt_package(spec, context):
     root.chmod(source['directories']['']['mode'])
     # Only host/cloud input extraction, after exact SHA256 check; never an install bypass.
     run(['apk', 'extract', '--allow-untrusted', '--destination', root, source_path])
+    preserve_link_times(root, source['files'])
     expected = expected_info(source['info'], policy)
     output = context['staging'] / f"{spec['name']}-{spec['version']}-{spec['arch']}.apk"
     command = ['apk', 'mkpkg', '--compat', '3.0.0_pre1', '--compression', 'deflate:0',
