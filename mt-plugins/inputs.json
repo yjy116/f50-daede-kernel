@@ -6,7 +6,7 @@
     {
       "name": "nlbwmon",
       "source_version": "2025.06.02~29236be6-r1",
-      "version": "2025.06.02~29236be6_p1-r1",
+      "version": "2025.06.02~29236be6-r2",
       "arch": "aarch64_generic",
       "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/nlbwmon-2025.06.02~29236be6-r1.apk",
       "sha256": "04af7df7a6c63e5874802a6a12b6dfb80366bea6e0d446e240ff58692a1a3679",

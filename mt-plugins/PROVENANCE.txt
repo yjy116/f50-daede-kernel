@@ -7,7 +7,7 @@ The original APKs have no standalone signature. Their index signatures and
 metadata-to-payload hash chains were verified before these inputs were pinned.
 
 Exact permitted changes:
-- nlbwmon 2025.06.02~29236be6-r1 -> 2025.06.02~29236be6_p1-r1;
+- nlbwmon 2025.06.02~29236be6-r1 -> 2025.06.02~29236be6-r2;
   remove only kmod-nf-conntrack-netlink.
 - tailscale 1.98.3-r1 -> 1.98.3_p1-r1; remove only kmod-tun.
 - Append an explicit F50 adaptation description and add one new package signature.
