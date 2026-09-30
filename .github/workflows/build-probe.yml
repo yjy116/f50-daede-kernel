@@ -21,11 +21,11 @@ jobs:
       - name: Compile static ARM64 diagnostic
         run: |
           mkdir -p artifacts
-          gcc -static -O2 -Wall -Wextra -Werror -std=c11 tools/bpf-probe.c -o artifacts/bpf-probe
+          gcc -static -O2 -Wall -Wextra -Werror -std=c11 tools/bpf-probe.c tools/bpf-probe-btf.c -o artifacts/bpf-probe
           file artifacts/bpf-probe | tee artifacts/file.txt
           readelf -h artifacts/bpf-probe > artifacts/elf-header.txt
           gcc --version > artifacts/compiler.txt
-          sha256sum tools/bpf-probe.c artifacts/bpf-probe > artifacts/SHA256SUMS
+          sha256sum tools/bpf-probe.c tools/bpf-probe-btf.c tools/bpf-probe-btf.h artifacts/bpf-probe > artifacts/SHA256SUMS
       - name: Upload diagnostic and build evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

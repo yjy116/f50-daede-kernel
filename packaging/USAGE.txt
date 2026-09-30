@@ -1,0 +1,84 @@
+F50 daed/LuCI/ZeroTier APK adaptation (host/cloud only; no device operations)
+
+From the repository root:
+  docker build --file packaging/Dockerfile --tag f50-apk-packaging .
+  docker run --rm --mount type=bind,src=/absolute/evidence,dst=/evidence,readonly \
+    --mount type=bind,src=/absolute/output,dst=/out \
+    f50-apk-packaging --kernel-validation /evidence/kernel-validation.json \
+    --kernel-config /evidence/kernel.config --output /out
+
+Optional input cache: mount it read-only and pass --input-dir /inputs. It must
+contain the three filenames in inputs.json. Without this option only the fixed
+upstream HTTPS URLs are downloaded. Their SHA256 is checked before APK parsing
+and before apk extract --allow-untrusted. This extraction option is never used
+to install packages. No upstream binary or lifecycle script is executed here.
+
+Run static invariant tests with:
+  python3 -B -m unittest discover -s packaging -p 'test_*.py'
+
+The official Alpine 3.23.6 multiarch image digest is fixed in Dockerfile;
+apk-tools is exactly 3.0.8-r0. Python/OpenSSL and the complete installed package
+versions are captured in the output. Run as container root so package ownership
+can be preserved. The host need not be ARM64: no target executable is run.
+
+The evidence argument must be the real successful kernel-validation.json from
+this project's 6.18.54-f50-dae1 or 7.2.8-f50-dae1 build. --kernel-config must be
+the actual complete kernel.config, whose size and SHA256 match that report's
+single .config artifact. Required built-in values including CONFIG_TUN=y are
+checked in those exact bytes; the report SHA256 is recorded. This is build evidence, not proof
+of the device's running kernel or a completed dae datapath test.
+
+Only package metadata is adapted:
+- daed 2026.09.24_p1-r2: remove kmod-sched-bpf, kmod-sched-core and kmod-veth.
+- luci-app-daede 1.15_p1-r6: depend on daed=2026.09.24_p1-r2 exactly.
+- zerotier 1.16.0_p1-r1: remove kmod-tun only; retain all seven other dependencies.
+- Description explicitly identifies the F50 adaptation and external manifest.
+The kmod-sched-core mapping covers dae-required paths only, not all algorithms.
+No fake kernel/kmod provides are introduced. Other dependencies/provides remain.
+
+Every payload file, directory ACL, mode, owner, mtime and lifecycle script must
+match the original. The pinned sources have root ownership and no xattrs.
+ZeroTier additionally has exactly two relative symlinks: usr/bin/zerotier-cli
+and usr/bin/zerotier-idtool point to zerotier-one. Their target blob, type, mode,
+owner, size and mtime must match; they have no data blocks. Unknown link sets,
+devices, hardlinks, noncanonical targets and xattr formats fail explicitly.
+--compat 3.0.0_pre1 preserves all original parent-directory records and is readable
+by device apk 3.0.5. deflate:0 preserves the ADBd encoding used by our reader.
+SOURCE_DATE_EPOCH is removed for apk calls to prevent overwriting file mtimes.
+Derived package identity hashes change; installed-size must still match.
+
+For daed only, default enabled=0 is verified byte-for-byte. Original init, guard and install
+scripts are retained: installation can still run upstream LuCI migration/cache/
+web-server refresh actions. An existing enabled configuration is not forcibly
+disabled by this repacker. API-only or live datapath activation is a separate
+device operation. ZeroTier's original configuration and service behavior are
+preserved without applying daed's disabled-state assertion. This adds the official
+ZeroTier core only, not an unofficial LuCI UI. Upstream LuCI package updater is unchanged and does not know
+this F50 dependency adaptation; a future replacement needs equivalent review.
+
+Each run generates an ECDSA P-256 private key only in container /dev/shm, mode
+0600, exports the public key, signs during mkpkg, and verifies using a dedicated
+keys directory with network/repositories disabled. The key is never logged or
+copied into output; context cleanup removes it even on exceptions and container
+exit destroys tmpfs. Do not mount host secrets, the Docker socket or /dev/shm.
+Packages are not bit-identical between runs because signing identity is fresh;
+payloads and their SHA256 remain identical. No trust-store or device key changes
+are performed. The caller may later use only keys/f50-packaging.pem in a temporary
+installation keys directory alongside separately authenticated dependency keys.
+
+Output must be empty to prevent mixing signing rounds. Only after all audits
+and apk signature checks pass does it receive the three signed APKs, public key,
+packaging-manifest.json and SHA256SUMS. There is no index or private key artifact.
+The manifest contains complete file/ACL/script hashes, exact metadata changes,
+input provenance, built-in mappings, tool versions and packaging source hashes.
+ZeroTier's pinned source was authenticated against OpenWrt's signed packages.adb
+before its whole-file SHA256 was recorded. The index/key/metadata hashes are in
+inputs.json; this repacker enforces the pinned APK SHA256 and does not claim a
+fresh remote index-signature check on every build.
+
+Authority references reviewed against apk-tools v3.0.8:
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/app_mkpkg.c
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/app_extract.c
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/apk_adb.c
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/adb_comp.c
+https://github.com/alpinelinux/apk-tools/blob/v3.0.8/src/common.c

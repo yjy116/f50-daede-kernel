@@ -1,0 +1,48 @@
+{
+  "daede_upstream_release": "https://github.com/kenzok8/openwrt-daede/releases/tag/v2026.09.26",
+  "daede_upstream_commit": "0b0e5d671e5748a060fbd79abc2f73733b09f902",
+  "container": "docker.io/library/alpine:3.23.6@sha256:85fe1e81d6758c208f3e1eed4338a1997e19d4be002d4dd32d3100c9a8c010a0",
+  "apk_tools_package": "3.0.8-r0",
+  "description_suffix": "; F50-only packaging adaptation: reviewed kernel dependencies are built in; upstream payload unchanged; see packaging-manifest.json",
+  "packages": [
+    {
+      "name": "daed",
+      "source_version": "2026.09.24-r2",
+      "version": "2026.09.24_p1-r2",
+      "arch": "aarch64_generic",
+      "url": "https://github.com/kenzok8/openwrt-daede/releases/download/v2026.09.26/daed-2026.09.24-r2-aarch64_generic.apk",
+      "sha256": "1f6153bcb48e3d7682d2922b4fe8e8fbdf005eb45d674676aee9cec1759c4076",
+      "binary_path": "usr/bin/daed",
+      "binary_sha256": "a2d70e42238ea305d10bab149932465b873f6637dbe92cc9adc685092afe962d"
+    },
+    {
+      "name": "luci-app-daede",
+      "source_version": "1.15-r6",
+      "version": "1.15_p1-r6",
+      "arch": "noarch",
+      "url": "https://github.com/kenzok8/openwrt-daede/releases/download/v2026.09.26/luci-app-daede-1.15-r6-aarch64_generic.apk",
+      "sha256": "4d139643f5dd71f83f5ced8c7226b14191860a314dbe7483205047bbbf516abd"
+    },
+    {
+      "name": "zerotier",
+      "source_version": "1.16.0-r1",
+      "version": "1.16.0_p1-r1",
+      "arch": "aarch64_generic",
+      "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/zerotier-1.16.0-r1.apk",
+      "sha256": "641621f430cd0bb9fa49f285ab02c8d05c9c017d601072201d5d8061c5f4149f",
+      "binary_path": "usr/bin/zerotier-one",
+      "binary_sha256": "9023b4e8e0b5836d8431770331eb81a7bf4b8444ce062a3094acacf0a9cc69e0",
+      "symlinks": {
+        "usr/bin/zerotier-cli": "zerotier-one",
+        "usr/bin/zerotier-idtool": "zerotier-one"
+      },
+      "source_authentication": {
+        "method": "Official signed-index binding verified before pinning this input",
+        "index_url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/packages.adb",
+        "index_sha256": "19aeea63ab1ba94a6f40424f77e5f8dff80870e6a61b5d4483b605cb8989be1b",
+        "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
+        "package_metadata_sha256": "79815be54bdc29fc084b7d92f0e5426946d7dee816887c7bd758d386792de0f5"
+      }
+    }
+  ]
+}

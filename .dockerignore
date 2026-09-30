@@ -1,2 +1,5 @@
 *
 !Dockerfile
+!packaging/
+!packaging/**
+packaging/__pycache__/

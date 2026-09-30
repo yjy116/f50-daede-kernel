@@ -1,0 +1,40 @@
+name: F50 adapted networking packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout packaging definitions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Retrieve successful pinned kernel evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 36672813155 --repo yjy116/f50-daede-kernel --name f50-kernel-7.2.8 --dir kernel-evidence
+          printf '%s  %s\n' ba58a7af264857e5254165ef4de240bf15dcf3b6a709f8f916a097fc71dbbf05 kernel-evidence/kernel-validation.json | sha256sum --check --strict -
+      - name: Build audited packaging environment
+        run: docker build -f packaging/Dockerfile -t f50-apk-packaging .
+      - name: Repack and sign with an ephemeral key
+        run: |
+          mkdir -p package-artifacts
+          docker run --rm \
+            -v "$PWD/kernel-evidence:/evidence:ro" \
+            -v "$PWD/package-artifacts:/out" \
+            f50-apk-packaging \
+            --kernel-validation /evidence/kernel-validation.json \
+            --kernel-config /evidence/kernel.config --output /out
+      - name: Upload packages and public verification evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f50-networking-packages
+          path: package-artifacts/
+          if-no-files-found: error

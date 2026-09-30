@@ -1,4 +1,6 @@
 /artifacts/
 /upstream-source/
+/kernel-evidence/
+/package-artifacts/
 __pycache__/
 *.pyc

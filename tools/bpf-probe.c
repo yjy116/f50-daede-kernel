@@ -1,11 +1,14 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
-/* Native ARM64: gcc -std=c11 -O2 -Wall -Wextra -Werror -static bpf-probe.c -o bpf-probe
- * Only LOAD / GET_INFO / CLOSE. No execution, attach, map, pin or network changes.
+/* Native ARM64: gcc -std=c11 -O2 -Wall -Wextra -Werror -static
+ *              bpf-probe.c bpf-probe-btf.c -o bpf-probe
+ * Only BTF_LOAD / PROG_LOAD / GET_INFO / CLOSE. No execution, attach, map or pin.
  * PASS proves these small programs load and JIT, not CO-RE or full dae readiness.
  */
 #define _GNU_SOURCE
+#include "bpf-probe-btf.h"
 #include <errno.h>
 #include <linux/bpf.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,12 +23,10 @@
 #define EXIT_INSN { .code = BPF_JMP | BPF_EXIT }
 
 enum {
-    VERIFIER_LOG_BYTES = 256 * 1024,
     LOOP_ITERATIONS = 1,
     LOOP_FUNC_INSN = 1,
-    LOOP_CALLBACK_INSN = 8,
     LOOP_INSN_COUNT = 10,
-    LOOP_FUNC_RELATIVE = LOOP_CALLBACK_INSN - LOOP_FUNC_INSN - 1,
+    LOOP_FUNC_RELATIVE = PROBE_CALLBACK_INSN - LOOP_FUNC_INSN - 1,
     TC_RESULT_OK = 0,
     CGROUP_ALLOW = 1
 };
@@ -70,19 +71,20 @@ struct probe {
     enum bpf_attach_type attach_type;
     const struct bpf_insn *instructions;
     size_t count;
+    bool needs_btf;
 };
 
 static const struct probe probes[] = {
     { "sched_cls", BPF_PROG_TYPE_SCHED_CLS, 0,
-      tc_program, ARRAY_COUNT(tc_program) },
+      tc_program, ARRAY_COUNT(tc_program), false },
     { "cgroup_sock", BPF_PROG_TYPE_CGROUP_SOCK, BPF_CGROUP_INET_SOCK_CREATE,
-      cgroup_program, ARRAY_COUNT(cgroup_program) },
+      cgroup_program, ARRAY_COUNT(cgroup_program), false },
     { "cgroup_sock_addr", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT,
-      cgroup_program, ARRAY_COUNT(cgroup_program) },
+      cgroup_program, ARRAY_COUNT(cgroup_program), false },
     { "sched_cls_loop", BPF_PROG_TYPE_SCHED_CLS, 0,
-      tc_loop_program, ARRAY_COUNT(tc_loop_program) },
+      tc_loop_program, ARRAY_COUNT(tc_loop_program), true },
     { "cgroup_sock_addr_loop", BPF_PROG_TYPE_CGROUP_SOCK_ADDR, BPF_CGROUP_INET4_CONNECT,
-      cgroup_loop_program, ARRAY_COUNT(cgroup_loop_program) }
+      cgroup_loop_program, ARRAY_COUNT(cgroup_loop_program), true }
 };
 
 struct inspection {
@@ -99,7 +101,7 @@ static int report_error(const struct probe *probe, const char *stage, int error)
     return 1;
 }
 
-static int load_program(const struct probe *probe, char *log)
+static int load_program(const struct probe *probe, char *log, int btf_fd)
 {
     static const char license[] = "GPL";
     union bpf_attr attr = {0};
@@ -109,8 +111,14 @@ static int load_program(const struct probe *probe, char *log)
     attr.insns = (__u64)(uintptr_t)probe->instructions;
     attr.license = (__u64)(uintptr_t)license;
     attr.log_buf = (__u64)(uintptr_t)log;
-    attr.log_size = VERIFIER_LOG_BYTES;
+    attr.log_size = PROBE_LOG_BYTES;
     attr.log_level = 1;
+    if (probe->needs_btf) {
+        attr.prog_btf_fd = (__u32)btf_fd;
+        attr.func_info = (__u64)(uintptr_t)probe_func_info;
+        attr.func_info_cnt = PROBE_FUNC_COUNT;
+        attr.func_info_rec_size = sizeof(probe_func_info[0]);
+    }
     return (int)syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
 }
 
@@ -151,15 +159,31 @@ static int verify_info(const struct probe *probe, const struct inspection *resul
 
 static int run_probe(const struct probe *probe)
 {
-    char *log = calloc(VERIFIER_LOG_BYTES, 1);
+    char *log = calloc(PROBE_LOG_BYTES, 1);
     if (!log)
         return report_error(probe, "ALLOC_LOG", ENOMEM);
-    const int fd = load_program(probe, log);
+    const int btf_fd = probe->needs_btf ? load_probe_btf(log) : -1;
+    if (probe->needs_btf && btf_fd < 0) {
+        report_error(probe, "BTF_LOAD", errno);
+        fprintf(stderr, "%s: BTF log (may be truncated):\n%.*s\n",
+                probe->name, PROBE_LOG_BYTES, log);
+        free(log);
+        return 1;
+    }
+    memset(log, 0, PROBE_LOG_BYTES);
+    const int fd = load_program(probe, log, btf_fd);
     const int load_error = errno;
+    int failed = 0;
+    if (btf_fd >= 0) {
+        if (close(btf_fd) != 0)
+            failed |= report_error(probe, "BTF_CLOSE", errno);
+        else
+            printf("probe=%s btf_load=success btf_fd_closed=yes\n", probe->name);
+    }
     if (fd < 0) {
         report_error(probe, "LOAD", load_error);
         fprintf(stderr, "%s: verifier log (capacity=%u, may be truncated):\n%.*s\n",
-                probe->name, (unsigned)VERIFIER_LOG_BYTES, VERIFIER_LOG_BYTES, log);
+                probe->name, (unsigned)PROBE_LOG_BYTES, PROBE_LOG_BYTES, log);
         free(log);
         return 1;
     }
@@ -167,7 +191,7 @@ static int run_probe(const struct probe *probe)
     const struct inspection result = inspect_program(fd);
     const int close_result = close(fd);
     const int close_error = errno;
-    int failed = verify_info(probe, &result);
+    failed |= verify_info(probe, &result);
     if (close_result != 0)
         failed |= report_error(probe, "CLOSE", close_error);
     if (!failed)
@@ -179,7 +203,7 @@ int main(int argc, char **argv)
 {
     if (argc == 2 && strcmp(argv[1], "--help") == 0) {
         puts("Usage: bpf-probe [--help]\n"
-             "Only LOAD/GET_INFO/CLOSE; requires Linux BPF privileges.\n"
+             "Only BTF_LOAD/PROG_LOAD/GET_INFO/CLOSE; requires Linux BPF privileges.\n"
              "Exit 0: all probes loaded and JIT confirmed; 1: failure; 2: usage.\n"
              "Does not execute helpers, attach, test CO-RE or validate full dae.");
         return 0;
@@ -189,7 +213,8 @@ int main(int argc, char **argv)
         return 2;
     }
     unsigned failures = 0;
-    puts("scope=load_and_jit_only attach=no execute=no core_tested=no dae_tested=no");
+    puts("scope=program_btf_load_and_jit_only attach=no execute=no "
+         "kernel_btf_tested=no core_tested=no dae_tested=no");
     for (size_t index = 0; index < ARRAY_COUNT(probes); ++index)
         failures += (unsigned)run_probe(&probes[index]);
     printf("summary=%s probes=%zu failures=%u\n",
