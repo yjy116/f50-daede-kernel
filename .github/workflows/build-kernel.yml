@@ -26,6 +26,10 @@ jobs:
           ref: 1a69a41ea9d20fadd575e9b082364d61ce5fcf9a
           path: upstream-source
           persist-credentials: false
+      - name: Verify WLAN patch regression tests
+        env:
+          F50_TEST_UPSTREAM: ${{ github.workspace }}/upstream-source
+        run: timeout 60s python3 -m unittest discover -s scripts -p 'test_*wlan_rx*.py' -v
       - name: Build native ARM64 environment
         id: environment
         run: |

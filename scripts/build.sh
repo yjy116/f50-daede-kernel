@@ -23,6 +23,8 @@ prepare_sources() {
     [ "$(uname -m)" = aarch64 ]
     [ "$(git -c safe.directory=/source -C /source rev-parse HEAD)" = "$UPSTREAM_COMMIT" ]
     mkdir -p "$ARTIFACTS/logs"
+    python3 /project/scripts/wlan_rx_checksum.py apply --source-root /source \
+        --module-dir /work/modules/sprd_wlan_combo --output "$ARTIFACTS/wlan-rx-source.json"
     cp /work/mu300-mainline.config "$ARTIFACTS/upstream.config"
     printf '\n# F50 dae capabilities, kept separately in the build repository\n' >> /work/mu300-mainline.config
     cat /project/config/dae.config >> /work/mu300-mainline.config
@@ -59,6 +61,10 @@ compile_all() {
     python3 /project/scripts/validate_kernel.py --build-dir "$BUILD_DIR" \
         --module-dir /work/out/modules --config-extra /project/config/dae.config \
         --kernel-version "$KV" --output "$ARTIFACTS/kernel-validation.json"
+    python3 /project/scripts/validate_wlan_rx.py \
+        --module /work/out/modules/sprd_wlan_combo.ko --kernel "$BUILD_DIR/vmlinux" \
+        --compiled-source /src/mod-build/sprd_wlan_combo/sc2355/rx.c \
+        --source-report "$ARTIFACTS/wlan-rx-source.json" --output "$ARTIFACTS/wlan-rx-validation.json"
 }
 
 package_outputs() {
@@ -69,7 +75,10 @@ package_outputs() {
     xz -T0 -c "$BUILD_DIR/vmlinux" > "$ARTIFACTS/vmlinux.xz"
     cd "$ARTIFACTS"
     sha256sum ./*.tar.gz ./vmlinux.xz ./vmlinux.btf ./kernel.config \
-        ./kernel-validation.json ./Module.symvers ./kernel.release > SHA256SUMS
+        ./kernel-validation.json ./Module.symvers ./kernel.release \
+        ./wlan-rx-source.json ./wlan-rx-validation.json ./wlan-rx-patched.c \
+        ./wlan-rx-helper.disasm ./wlan-skb-layout.txt \
+        ./wlan_combo-rx-software-checksum.patch > SHA256SUMS
 }
 
 prepare_sources
