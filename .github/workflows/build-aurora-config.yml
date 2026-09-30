@@ -1,0 +1,34 @@
+name: F50 Aurora configuration packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        input: [config, config-zh-cn]
+    steps:
+      - name: Checkout reviewed signer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Build signature audit environment
+        run: docker build -f theme-aurora/Dockerfile -t f50-aurora-config .
+      - name: Sign original package and verify unchanged contents
+        env:
+          INPUT: ${{ matrix.input }}
+        run: |
+          mkdir -p artifacts
+          docker run --rm -v "$PWD/artifacts:/out" f50-aurora-config \
+            --input "/theme-aurora/$INPUT.json" --output /out
+      - name: Upload package and audit evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: f50-aurora-${{ matrix.input }}
+          path: artifacts/
+          if-no-files-found: error

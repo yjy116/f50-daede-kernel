@@ -1,0 +1,11 @@
+{
+  "name": "luci-app-aurora-config",
+  "version": "1.2.5-r20260920",
+  "arch": "noarch",
+  "filename": "luci-app-aurora-config-1.2.5-r20260920.apk",
+  "url": "https://github.com/eamonxg/luci-app-aurora-config/releases/download/v1.2.5/luci-app-aurora-config-1.2.5-r20260920.apk",
+  "sha256": "e290ef9465615d92b5d8baaeacb68a0b5f59edcc647895fa691fc2a3c81b6669",
+  "size": 138427,
+  "source_commit": "a5299ce0144859f47683ec3bc40805bf616f534f",
+  "license": "Apache-2.0"
+}

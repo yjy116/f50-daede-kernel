@@ -15,6 +15,10 @@ from apk3 import read_package, require
 
 TOOL_TIMEOUT_SECONDS = 60
 PUBLIC_KEY_NAME = 'f50-aurora.pem'
+ALLOWED_ORIGINS = (
+    'https://github.com/eamonxg/luci-theme-aurora/',
+    'https://github.com/eamonxg/luci-app-aurora-config/',
+)
 
 
 def run(command):
@@ -28,7 +32,7 @@ def digest(path):
 
 
 def fetch_pinned(spec, destination):
-    require(spec['url'].startswith('https://github.com/eamonxg/luci-theme-aurora/'),
+    require(spec['url'].startswith(ALLOWED_ORIGINS),
             'Unexpected input origin')
     request = urllib.request.Request(spec['url'], headers={'User-Agent': 'F50-Aurora-audit'})
     with urllib.request.urlopen(request, timeout=TOOL_TIMEOUT_SECONDS) as response:
@@ -104,9 +108,10 @@ def publish(context, result):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--input', type=Path, default=Path(__file__).with_name('input.json'))
     args = parser.parse_args()
     os.umask(0o077)
-    spec = json.loads(Path(__file__).with_name('input.json').read_text(encoding='utf-8'))
+    spec = json.loads(args.input.read_text(encoding='utf-8'))
     tool_versions = versions()
     with tempfile.TemporaryDirectory(prefix='f50-aurora-', dir='/dev/shm') as temporary:
         directory = Path(temporary)
