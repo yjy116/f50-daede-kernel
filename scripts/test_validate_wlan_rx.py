@@ -1,5 +1,6 @@
 """Parser/gate tests; these fixtures do not claim an actual module was compiled."""
 import unittest
+from pathlib import Path
 
 
 LAYOUT = '__u8 ip_summed:2; /* 128: 3 1 */'
@@ -46,6 +47,31 @@ class SoftwareChecksumGateTests(unittest.TestCase):
         for register in ('w0', 'w31'):
             with self.subTest(register=register), self.assertRaises(ValueError):
                 self.verify(ASSEMBLY.replace('w1', register))
+
+
+class ActualLayoutTests(unittest.TestCase):
+    def test_both_actual_kernel_layouts_and_helper_disassemblies(self):
+        from validate_wlan_rx import verify_software_checksum
+        fixtures = Path(__file__).parent / 'fixtures/wlan-rx'
+        for version in ('6.18.54', '7.2.8'):
+            with self.subTest(version=version):
+                assembly = (fixtures / (version + '-helper.disasm')).read_text()
+                layout = (fixtures / (version + '-layout.txt')).read_text()
+                report = verify_software_checksum(assembly, layout)
+                self.assertEqual(report['ip_summed_byte_offset'], 128)
+                self.assertEqual(report['ip_summed_bit_offset'], 5)
+                self.assertEqual(report['checksum_none_mask'], 0x9f)
+
+    def test_conflicting_named_alias_offsets_are_rejected(self):
+        from validate_wlan_rx import checksum_layout
+        fixtures = Path(__file__).parent / 'fixtures/wlan-rx'
+        for version in ('6.18.54', '7.2.8'):
+            layout = (fixtures / (version + '-layout.txt')).read_text()
+            changed = layout.replace('ip_summed:2;          /*   128:',
+                                     'ip_summed:2;          /*   129:', 1)
+            self.assertNotEqual(changed, layout)
+            with self.subTest(version=version), self.assertRaises(ValueError):
+                checksum_layout(changed)
 
 
 if __name__ == '__main__':

@@ -31,6 +31,13 @@ requires the ARM64 helper to load the checksum byte, clear precisely the two
 unexpected compiler output fails for review rather than skipping the check.
 The existing kernel/module/BTF/eBPF validation remains required and unchanged.
 
+The field location is also decoded from raw BTF whose hash is bound to the
+same validated kernel. Anonymous struct/union offsets are accumulated; the
+named `headers` alias is not treated as a second promoted member. Pahole's
+duplicate aliases must all agree with that unique absolute location. Captured
+6.18.54 and 7.2.8 output fixtures cover the actual byte 128, bit 5 layout and
+the corresponding `0x9f` checksum mask; conflicting offsets fail validation.
+
 Local tests apply the real upstream patch in temporary directories and reject
 source drift, patch drift and repeat application. Disassembly parser fixtures
 test the validation logic only; only the cloud build's real module and BTF

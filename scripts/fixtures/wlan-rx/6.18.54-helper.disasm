@@ -1,0 +1,21 @@
+/work/out/modules/sprd_wlan_combo.ko:     file format elf64-littleaarch64
+
+
+Disassembly of section .plt:
+
+Disassembly of section .text.ftrace_trampoline:
+
+Disassembly of section .text:
+
+00000000000121e0 <sc2355_fill_skb_csum>:
+   121e0:	ldrb	w1, [x0, #128]
+   121e4:	and	w1, w1, #0xffffff9f
+   121e8:	strb	w1, [x0, #128]
+   121ec:	mov	w0, #0x0                   	// #0
+   121f0:	ret
+
+Disassembly of section .init.text:
+
+Disassembly of section .exit.text:
+
+Disassembly of section .text.unlikely:

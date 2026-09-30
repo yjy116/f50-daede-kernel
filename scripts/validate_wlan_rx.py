@@ -8,6 +8,7 @@ import subprocess
 
 from validate_kernel import ET_REL, file_record, inspect_elf, require, run_tool
 from wlan_rx_checksum import AFTER_SHA256, PATCH_SHA256, digest
+from wlan_rx_btf import verified_layout
 
 HELPER = 'sc2355_fill_skb_csum'
 CHECKSUM_FIELD_BITS = 2
@@ -20,9 +21,9 @@ INTEGER = r'(?:0x[0-9a-f]+|[0-9]+)'
 
 def checksum_layout(layout):
     pattern = r'\bip_summed\s*:\s*2\s*;\s*/\*\s*(\d+)\s*:\s*(\d+)\s+\d+\s*\*/'
-    matches = re.findall(pattern, layout)
+    matches = set(re.findall(pattern, layout))
     require(len(matches) == 1, 'Cannot identify the real sk_buff.ip_summed BTF layout')
-    offset, bit = map(int, matches[0])
+    offset, bit = map(int, next(iter(matches)))
     require(bit + CHECKSUM_FIELD_BITS <= BYTE_BITS, 'Checksum field crosses a byte')
     return offset, bit
 
@@ -73,7 +74,11 @@ def verify_artifacts(options):
     options.output.parent.mkdir(parents=True, exist_ok=True)
     (options.output.parent / 'wlan-rx-helper.disasm').write_text(assembly + '\n', encoding='utf-8')
     (options.output.parent / 'wlan-skb-layout.txt').write_text(layout + '\n', encoding='utf-8')
+    raw = verified_layout(options.kernel, options.output.parent)
+    require(checksum_layout(layout) == (raw['byte_offset'], raw['bit_offset']),
+            'pahole layout disagrees with the matching raw BTF absolute offset')
     return {'status': 'PASS', 'proof': verify_software_checksum(assembly, layout),
+            'raw_btf_layout': raw,
             'module': file_record(options.module), 'source': file_record(options.compiled_source),
             'source_report': file_record(options.source_report),
             'runtime_boot_verified': False, 'panic_fix_verified': False}
