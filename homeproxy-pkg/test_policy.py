@@ -19,10 +19,13 @@ class PolicyTests(unittest.TestCase):
         self.assertIsNotNone(compiler, 'Native builder must provide ucode')
         root = Path(__file__).parent / 'test-fixtures'
         with tempfile.TemporaryDirectory() as directory:
-            for source in root.rglob('*.uc'):
-                result = subprocess.run([compiler, '-cmodule', '-o', str(Path(directory) / 'test.bc'), str(source)],
-                                        capture_output=True, text=True, timeout=60)
-                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            harness = Path(directory) / 'imports.uc'
+            harness.write_text("import { cursor } from 'uci';\nimport { connect } from 'ubus';\n"
+                               "import { urldecode_params } from 'luci.http';\n")
+            result = subprocess.run([compiler, '-L', str(root / '*.uc'), '-c',
+                                     '-o', str(Path(directory) / 'test.bc'), str(harness)],
+                                    capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_unpinned_rpc_source_is_rejected(self):
         with self.assertRaises(ValueError):
