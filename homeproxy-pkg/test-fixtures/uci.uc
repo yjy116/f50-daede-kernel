@@ -11,4 +11,4 @@ export function cursor() {
 				if (data[section]['.type'] === kind) callback(data[section]);
 		}
 	};
-}
+};

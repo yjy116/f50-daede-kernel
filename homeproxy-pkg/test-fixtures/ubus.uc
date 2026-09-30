@@ -4,4 +4,4 @@ export function connect() {
 		if (object !== 'network.interface' || method !== 'status') die('Unexpected ubus request');
 		return { 'dns-server': ['192.0.2.53'] };
 	}};
-}
+};

@@ -1,6 +1,11 @@
 """Focused contracts for the F50 capability patch and package evidence."""
 import copy
 import hashlib
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
 import unittest
 
 from model import audit_package, verify_kernel
@@ -8,6 +13,17 @@ from patch_features import patch_rpc
 
 
 class PolicyTests(unittest.TestCase):
+    @unittest.skipIf(os.name == 'nt', 'Linux cloud runs the real ucode compiler')
+    def test_fixture_modules_compile_with_real_ucode(self):
+        compiler = shutil.which('ucode')
+        self.assertIsNotNone(compiler, 'Native builder must provide ucode')
+        root = Path(__file__).parent / 'test-fixtures'
+        with tempfile.TemporaryDirectory() as directory:
+            for source in root.rglob('*.uc'):
+                result = subprocess.run([compiler, '-cmodule', '-o', str(Path(directory) / 'test.bc'), str(source)],
+                                        capture_output=True, text=True, timeout=60)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_unpinned_rpc_source_is_rejected(self):
         with self.assertRaises(ValueError):
             patch_rpc(b'unreviewed source')
