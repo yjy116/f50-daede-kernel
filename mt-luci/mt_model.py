@@ -23,7 +23,7 @@ def information(name, settings):
     return {'name': name, 'version': settings['version'], 'arch': settings.get('arch', 'noarch'),
             'description': settings.get('description', 'F50 reviewed MT3600BE LuCI companion: ' + name),
             'license': settings['license'], 'origin': 'f50/mt-luci',
-            'url': 'https://github.com/yjy116/f50-daede-kernel', 'depends': settings['depends']}
+            'url': 'https://github.com/yjy116/f50-daede-kernel', 'depends': sorted(settings['depends'])}
 
 
 def package_specs():
@@ -62,7 +62,7 @@ def audit_package(candidate, expected, info):
     require(candidate['signature_blocks'] == 1, 'Expected exactly one signature')
     require(candidate['package_fields'] == {}, 'Unexpected package extensions')
     actual = {key: value for key, value in candidate['info'].items() if key not in DERIVED}
-    require(actual == info, 'Unexpected package identity or dependencies')
+    require(actual == info, f'Unexpected package metadata: actual={actual!r}; expected={info!r}')
     size = sum(item['size'] for item in expected['files'].values())
     require(candidate['info']['installed-size'] == size, 'Installed size mismatch')
 
