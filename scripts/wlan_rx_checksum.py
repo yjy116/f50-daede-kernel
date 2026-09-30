@@ -12,7 +12,7 @@ PATCH_RELATIVE = Path('kernel/patches/wlan_combo-rx-software-checksum.patch')
 SOURCE_RELATIVE = Path('sc2355/rx.c')
 PATCH_SHA256 = 'a9b58f399781aa204550c1ff9829eb83c8db7193c0e40c5428c784572dd528cc'
 BEFORE_SHA256 = 'de78047e7eac6c5b0e8dc68e0152359435b9d2e63a27bff5b845103eadf0dddb'
-AFTER_SHA256 = 'e1a5966e9c46145e680399a8aa5b2a0ed5f5e560eef1c1e4c7a0e3a07a4ebf09'
+AFTER_SHA256 = 'e15b3fd5e668fa247951601331759c9d73cbb4ed66bbe3e206c64a186794aa8e'
 PATCH_TIMEOUT_SECONDS = 30
 
 
@@ -26,7 +26,8 @@ def digest(path):
 
 
 def run_git_apply(module, patch, check):
-    args = ['git', 'apply', '--whitespace=error-all']
+    args = ['git', '-c', 'core.autocrlf=false', '-c', 'core.eol=lf',
+            'apply', '--whitespace=error-all']
     if check:
         args.append('--check')
     result = subprocess.run([*args, str(patch)], cwd=module, capture_output=True,

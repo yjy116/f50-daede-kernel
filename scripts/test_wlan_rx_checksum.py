@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 
 HERE = Path(__file__).resolve().parent
@@ -60,6 +61,17 @@ class SourcePatchTests(unittest.TestCase):
         self.patcher.apply_source_patch(self.options)
         with self.assertRaisesRegex(ValueError, 'Unpatched WLAN source hash mismatch'):
             self.patcher.apply_source_patch(self.options)
+
+    def test_ambient_git_line_endings_do_not_change_patch_bytes(self):
+        original = self.target.read_bytes()
+        for autocrlf in ('true', 'false'):
+            environment = {'GIT_CONFIG_COUNT': '2', 'GIT_CONFIG_KEY_0': 'core.autocrlf',
+                           'GIT_CONFIG_VALUE_0': autocrlf, 'GIT_CONFIG_KEY_1': 'core.eol',
+                           'GIT_CONFIG_VALUE_1': 'crlf'}
+            with self.subTest(autocrlf=autocrlf), patch.dict(os.environ, environment):
+                self.target.write_bytes(original)
+                self.patcher.apply_source_patch(self.options)
+                self.assertEqual(self.target.read_bytes().count(b'\r'), 0)
 
     def test_changed_upstream_patch_is_rejected_without_modification(self):
         fake_root = self.root / 'changed-upstream'
