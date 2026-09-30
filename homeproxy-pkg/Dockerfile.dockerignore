@@ -1,0 +1,6 @@
+**
+!packaging/
+!packaging/**
+!homeproxy-pkg/
+!homeproxy-pkg/**
+**/__pycache__/

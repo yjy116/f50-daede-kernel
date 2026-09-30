@@ -1,0 +1,29 @@
+{
+  "luci": {
+    "url": "https://codeload.github.com/immortalwrt/luci/tar.gz/adc898b447eb4ee8023398182f5d0de2e8817e81",
+    "filename": "immortalwrt--luci--adc898b447eb4ee8023398182f5d0de2e8817e81.tar.gz",
+    "sha256": "023c3b6a1936c596adf52be0e591321665474c597485d0635f4134387f182ad2",
+    "prefix": "luci-adc898b447eb4ee8023398182f5d0de2e8817e81/"
+  },
+  "core": {
+    "url": "https://github.com/SagerNet/sing-box/releases/download/v1.12.25/sing-box-1.12.25-linux-arm64.tar.gz",
+    "filename": "sing-box-1.12.25-linux-arm64.tar.gz",
+    "sha256": "719b76196c8b31efa636b2d8f669e314547e0da0a5ab38a75e1882d307bbd154",
+    "prefix": "sing-box-1.12.25-linux-arm64/",
+    "binary_sha256": "7aa8c27aabf0da0cfa322792b414e66f076b9fb6c8e7fe19a4df2e60e20f1b73"
+  },
+  "openwrt": {
+    "url": "https://downloads.openwrt.org/releases/25.12.5/packages/aarch64_generic/packages/sing-box-1.13.21-r1.apk",
+    "filename": "sing-box-1.13.21-r1.apk",
+    "sha256": "7277d0087701c4908cdd8a3e8f0edacd6a39ab5da560da970e8f8fd627564abc",
+    "authentication": "Official signed-index binding verified; source binary is NOT reused",
+    "index_sha256": "19aeea63ab1ba94a6f40424f77e5f8dff80870e6a61b5d4483b605cb8989be1b",
+    "public_key_sha256": "27d61d827d64ccf2f46dce5f52aec6279404d4a00686dafb22f52f3b4ee675f8",
+    "metadata_sha256": "661285ec9dcbebcac5a90767480f03df4950fe91b00f2e24a9e927f7ba8bc080"
+  },
+  "core_source": {
+    "url": "https://codeload.github.com/SagerNet/sing-box/tar.gz/73bfb99ebce7923c485435e4faf8571b412065a9",
+    "filename": "sing-box-source-73bfb99ebce7923c485435e4faf8571b412065a9.tar.gz",
+    "sha256": "050783978feffed98cd420c854f968de98753814f34ef84b96478e9821307515"
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "LICENSE": {
+    "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/Makefile": {
+    "sha256": "e83360f1bc98979d4850c73014a7c5e31f4767dfd0dbe6f2b0c8414bf66943c5",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/htdocs/luci-static/resources/homeproxy.js": {
+    "sha256": "783c3fcd503458a2be6a66147370678c325e2253ad565592ee9278aa58644749",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/client.js": {
+    "sha256": "532fa635a2050e5f15298af4fe5504cff9a5ff4b2d8b6bd866239dab48148736",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/node.js": {
+    "sha256": "a5135da237de391ef30ad195424164ad80451b9039030d99c20e31c23d696a7b",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/server.js": {
+    "sha256": "08e64a479c224485ce9794094a56cbff3485937339aa65998103b2185e05348c",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/htdocs/luci-static/resources/view/homeproxy/status.js": {
+    "sha256": "343e544b2be5b76cb8f55242dbf1e0214deb01e22c70d7b7414ce5919bd59ef7",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/po/templates/homeproxy.pot": {
+    "sha256": "90a5e976cec3072406bb1256dfc8dca5726623f1e7d327b8cbbfbdb6d75c4132",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/po/zh_Hans/homeproxy.po": {
+    "sha256": "409e456058a3dc60528139cd5cc004495d48178f10a6fc6c2bb8e9f4d316368f",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/capabilities/homeproxy.json": {
+    "sha256": "375226a5c6798068edfbfe9656a314512fdd79047e7e22c92a5a90764903809b",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/config/homeproxy": {
+    "sha256": "5baa0691fe222386c3ee626edb75c5891739df8c936d837e6b026c0aeb0a3f99",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_ip4.txt": {
+    "sha256": "2002d6b06705e8b7ccfb66e1132afaaba7aced3778db94137c2d98f5ca69e433",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_ip4.ver": {
+    "sha256": "c4655bedc45538b871402db856c9285aa3c4da220c29af78be8d0b83fac5e7c7",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_ip6.txt": {
+    "sha256": "aaf9a87f47660e73b03fa4c17603f0a515c76fc6538faadc47a77cac35286e4b",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_ip6.ver": {
+    "sha256": "c4655bedc45538b871402db856c9285aa3c4da220c29af78be8d0b83fac5e7c7",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_list.txt": {
+    "sha256": "73b8225eab93787f381a47a128c9f44e3146a3f9af0766d149149602d0b21eef",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/china_list.ver": {
+    "sha256": "5f34d68b02def21e79c9a006eff78c09b6e9fee7271c603561cad39d774727f9",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/gfw_list.txt": {
+    "sha256": "82722b369ec0553e8d44d51439d52f3269c96ada107993954b8835c6a86bcb5c",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/resources/gfw_list.ver": {
+    "sha256": "5f34d68b02def21e79c9a006eff78c09b6e9fee7271c603561cad39d774727f9",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/clean_log.sh": {
+    "sha256": "8ad6e775892d0956479c8ca1d210dea9ec314c7fd1cca3725fed3f49e0cbd2f3",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/firewall_post.ut": {
+    "sha256": "731a1e34deeeb742839f800f1fcc9b3e73f6df9ba594355f43ff39fcd1fd2c8e",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/firewall_pre.uc": {
+    "sha256": "d49e1769460faa884a9e6a003f08aecbd3e9cdf73cf46a88a0ba6839db35b887",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/generate_client.uc": {
+    "sha256": "7545f12f2af648ab09c64bea943257ed5c768f8689d910d3beb9aed15b069812",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/generate_server.uc": {
+    "sha256": "c8c788215e185785ac34ae6942a5ee67cdde0f6a455bc868063bfc94fce560a8",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/homeproxy.uc": {
+    "sha256": "61717729573c38c025302384f0e604707024d5333b6de991b71c098aa90f09d9",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/migrate_config.uc": {
+    "sha256": "bb56410eed07cd771f0ea417be68662669e4aaff98fe8963e3035ce21554b286",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/update_crond.sh": {
+    "sha256": "6aed3a056ee03ea34502c311d9fc599ffd7c2aeaaaa08064aa44e6f17cd0a9e8",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/update_resources.sh": {
+    "sha256": "9b9fa854a59de3c617457af7722664752e235f1855ae7ce732581600d2e49347",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/homeproxy/scripts/update_subscriptions.uc": {
+    "sha256": "05f90db1ab8ccd8f41906ffa7b3b1d40ae9e2cd552590e720fdd7a88d33120a7",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/init.d/homeproxy": {
+    "sha256": "47e624476a7a409209496de47cd64f73fed7dc86698cf6d6ec2b286c25c88340",
+    "mode": 509,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/uci-defaults/luci-homeproxy": {
+    "sha256": "310875281bcd4e23a44a00c297b989703f040626d1245f70a745e0cb504cb234",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/etc/uci-defaults/luci-homeproxy-migration": {
+    "sha256": "ddb9a162a1e1f9de161d272751d30263b4ed4f227c3e0fcc25d6d7ecb77b6e6b",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/usr/share/luci/menu.d/luci-app-homeproxy.json": {
+    "sha256": "4b1738f2c382cb3bfb4dde3dedda55b97da121e76b989691c78973fbd8943d78",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/usr/share/rpcd/acl.d/luci-app-homeproxy.json": {
+    "sha256": "4d275bb87e71c2755b7c8eef785bc27e6f8e6907ab8b0293f7174d0ca4466d2d",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "applications/luci-app-homeproxy/root/usr/share/rpcd/ucode/luci.homeproxy": {
+    "sha256": "9085d4f67735e549c7b0a636f6d23f56de46fc6bc3e6acfc56026679f96da3e3",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/po2lmo.c": {
+    "sha256": "567caad86e85332a026bc502e10f3f16eb5ef8cb0a7637623217c1a1ba2111ef",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/Makefile": {
+    "sha256": "f49e4d9472eef6052b6e3565f4e029fd3131d1a7721a016c995e402e363f169c",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/contrib/lemon.c": {
+    "sha256": "2db13d122c17fa204073aec232a1949714b8c8df6e150b8727557750b5848e35",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/contrib/lempar.c": {
+    "sha256": "f0a1197034470e664534f49955e11be36573a76fcb3363a65bbd2abbd0f03968",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/lib/lmo.c": {
+    "sha256": "1c42aaa581a2a9f6333bce2acd39d3651765b74f6f2513af0a3e295434b06153",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/lib/lmo.h": {
+    "sha256": "0cba114fdc0588cd2d372881c1380ae4f4736043aef0d029dfa486c4dde87206",
+    "mode": 436,
+    "mtime": 1789698011
+  },
+  "modules/luci-base/src/lib/plural_formula.y": {
+    "sha256": "92b89b38b4076dd2ce093784ba781cbb405f3d7fa6068e05ac6ff0e4cb3bdc01",
+    "mode": 436,
+    "mtime": 1789698011
+  }
+}

@@ -1,0 +1,83 @@
+F50 HomeProxy, paired with the MT build's sing-box 1.12.25
+========================================================
+UI: immortalwrt/luci adc898b447eb4ee8023398182f5d0de2e8817e81.
+https://github.com/immortalwrt/luci/tree/adc898b447eb4ee8023398182f5d0de2e8817e81/applications/luci-app-homeproxy
+Source-lock.json pins selected public file bytes, including original license
+notices and po2lmo source. No device configuration or credentials are included.
+
+Core: official SagerNet/sing-box v1.12.25, source commit
+73bfb99ebce7923c485435e4faf8571b412065a9.
+https://github.com/SagerNet/sing-box/releases/tag/v1.12.25
+https://github.com/SagerNet/sing-box/tree/73bfb99ebce7923c485435e4faf8571b412065a9
+The official ARM64 binary remains byte-identical. The release tar SHA256 is
+719b76196c8b31efa636b2d8f669e314547e0da0a5ab38a75e1882d307bbd154.
+The binary SHA256 is
+7aa8c27aabf0da0cfa322792b414e66f076b9fb6c8e7fe19a4df2e60e20f1b73.
+The native ARM64 build checks static ELF, actual version/build tags and actual
+sing-box check results. It never starts the daemon or proxy traffic.
+
+Why 1.12.25, not the current OpenWrt 1.13.21 core
+===============================================
+The fixed UI unconditionally generates mixed-in sniff=true and generates the
+same legacy fields for redirect/tproxy/tun. Official 1.13.21 option/inbound.go
+rejects nonzero legacy inbound options at decoding; 1.12.25 still accepts them.
+https://github.com/SagerNet/sing-box/blob/v1.13.21/option/inbound.go#L44-L48
+https://github.com/SagerNet/sing-box/blob/v1.12.25/option/inbound.go
+Do not upgrade only this core to 1.13. An explicit exact-version UI dependency
+keeps this reviewed pair together; it is not a fake kernel/module provider.
+
+OpenWrt service/config integration
+=================================
+The signed-index-authenticated OpenWrt 25.12.5 sing-box 1.13.21-r1 package is
+used only as a carrier for its init/config, user registration, keep.d, file lists
+and original lifecycle scripts. Its old binary is replaced with the official
+1.12.25 binary; every other payload byte/ACL/mtime and lifecycle script is checked.
+Package version is honestly 1.12.25-r1, description/origin identify this build.
+Only kmod-tun/kmod-inet-diag dependencies are removed; ca-bundle/libc remain.
+The original legitimate sing-box-any provide is retained, not a kmod provide.
+The original core UCI enabled=0 remains. Its default post-install may enable the
+init symlink, but the init's enabled guard prevents daemon startup on fresh config.
+
+HomeProxy main_node=nil, server.enabled=0 and LAN proxy disabled stay unchanged.
+Original UI defaults register and commit three firewall includes and run its
+configuration migration. This does not activate a proxy on fresh defaults;
+existing configured state changes that assumption. Standard post-install can
+commit UCI; install only after reviewing existing pending changes and backups.
+Starting a configured HomeProxy intentionally changes runtime DNS, policy routes,
+TUN and fw4; stop/reload are not harmless diagnostic commands. None run here.
+
+Small UI changes and kernel limits
+=================================
+Only RPC feature detection, a visible client help string, and its Chinese
+translation change. Detection reads the running /proc/config.gz and accepts
+CONFIG_TUN=y / CONFIG_NFT_TPROXY=y, retaining genuine module detection too.
+It never creates fake .ko files or trusts a fixed true capability value.
+The build requires the hash/size-bound PASS 7.2.8-f50-dae1 config with TUN,
+NFT_TPROXY and INET_TCP_DIAG built in. UDP_DIAG and RAW_DIAG are not claimed.
+sing-box 1.12.25 creates process lookup only for process rules/find_process;
+lookup errors are logged and routing continues. UDP process/path/UID matching
+therefore cannot be relied on. Ordinary address/domain/TUN/TPROXY operation
+does not require UDP process lookup; the Linux searcher does not query RAW.
+The missing capability is stated visibly, not presented as complete support.
+
+Validation boundary and signing
+===============================
+Cloud runs the actual fixed ucode client generator with three public fixtures
+for redirect_tproxy, redirect_tun and tun, followed by real official core check.
+UCI, WAN-DNS ubus and validate_data boundaries are explicit test doubles; there
+is no real device access, subscription or live service. Original generator code
+is unchanged; only its helper's filesystem paths point at the isolated workspace.
+Full protocol coverage, user configuration correctness and real traffic are not
+claimed. All diagnostics including deprecation warnings are retained.
+The signing private key exists only in /dev/shm and is never exported. Outputs
+are verified against only the generated public key with no network and without
+allow-untrusted. That flag is used solely for host extraction after carrier SHA
+verification. Signed output readback compares exact expected files and metadata.
+
+Build contract: native ARM64; same arguments as mt-plugins:
+--kernel-validation /evidence/kernel-validation.json
+--kernel-config /evidence/kernel.config --output /out
+Optional --input-dir contains the four exact filenames in inputs.json, including
+the fixed official sing-box source archive exported with the public source bundle.
+Parent owns workflow, commits, deployment and device acceptance. Local unit tests
+do not prove the not-yet-run cloud build or runtime network functionality.
