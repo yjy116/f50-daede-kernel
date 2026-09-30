@@ -1,5 +1,6 @@
 """Explicit F50 metadata adaptation and invariants; no target-system operations."""
 import hashlib
+import json
 import re
 
 from apk3 import require
@@ -37,7 +38,12 @@ def expected_info(info, policy):
 
 
 def audit_repack(source, candidate, policy):
-    for key in ('directories', 'files', 'scripts', 'package_fields'):
+    for key in ('directories', 'files'):
+        differences = {name: {'before': source[key].get(name), 'after': candidate[key].get(name)}
+                       for name in sorted(source[key].keys() | candidate[key].keys())
+                       if source[key].get(name) != candidate[key].get(name)}
+        require(not differences, f'{key} changed during repack: {json.dumps(differences)}')
+    for key in ('scripts', 'package_fields'):
         require(source[key] == candidate[key], f'{key} changed during repack')
     require(candidate['signature_blocks'] == 1, 'Expected one package signature')
     expected = expected_info(source['info'], policy)
