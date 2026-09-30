@@ -134,7 +134,8 @@ def create_key(private_directory, keys):
 def tool_versions():
     require(os.geteuid() == 0, 'Root container is required to preserve ownership')
     version = run(['apk', '--version'])
-    require('apk-tools 3.0.8,' in version, f'Unexpected apk-tools version: {version}')
+    require(version.startswith('apk-tools 3.0.8-r0, compiled for '),
+            f'Unexpected apk-tools version: {version}')
     return {'apk': version, 'openssl': run(['openssl', 'version']), 'python': sys.version,
             'installed_packages': run(['apk', 'info', '-v'])}
 
