@@ -1,0 +1,15 @@
+# F50 kernels with BTF and eBPF
+
+Build Linux **6.18.54** and **7.2.8** for the ZTE F50/MU300 using GitHub Actions' native ARM64 runners. Both use the MU300 port at commit `1a69a41ea9d20fadd575e9b082364d61ce5fcf9a`, with an explicit configuration fragment for dae/daed capabilities.
+
+The workflow is started manually from **Actions → F50 kernels with BTF and eBPF → Run workflow**. Each kernel is built independently, including all 31 matching vendor modules. Kernel tarballs, helper bundle and action revisions are pinned. Compiler and container details are recorded with the outputs.
+
+Artifacts contain a project-format kernel bundle, the effective kernel configuration, the exact vmlinux BTF, compressed vmlinux, module symbol versions, validation results, compiler logs and SHA256 hashes. Failed builds retain diagnostics; an artifact from a failed run is not an installable release.
+
+The release suffix is `-f50-dae1`. Network features are built in because the upstream packaging script only includes the vendor modules. Module debug information is removed with `--strip-debug` before packaging; module names, architecture and version are checked afterward. vmlinux BTF is mandatory; module split-BTF is not required for this profile.
+
+This repository contains build definitions and references to public sources. It does not contain device backups, device credentials, mobile configuration or a device-specific boot image. The workflow does not flash a device or publish a GitHub Release.
+
+A successful build proves the recorded build checks only. Before installation, verify the complete device-specific boot image layout and keep a working rollback image. Hardware boot, USB, Wi-Fi, eBPF loading and actual proxy traffic still require tests on the F50. Stock OpenWrt 6.12 kernel modules and unrelated BTF packages must not be substituted for this kernel's own outputs.
+
+Sources: [MU300 port](https://github.com/dikeckaan/mu300-linux), [dae requirements](https://github.com/daeuniverse/dae/blob/main/docs/en/README.md), [OpenWrt daede packaging](https://github.com/kenzok8/openwrt-daede).

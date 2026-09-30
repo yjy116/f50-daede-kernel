@@ -1,0 +1,63 @@
+name: F50 kernels with BTF and eBPF
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Linux ${{ matrix.kernel }}
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        kernel: ['6.18.54', '7.2.8']
+    steps:
+      - name: Checkout build definitions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Checkout pinned MU300 sources
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: dikeckaan/mu300-linux
+          ref: 1a69a41ea9d20fadd575e9b082364d61ce5fcf9a
+          path: upstream-source
+          persist-credentials: false
+      - name: Build native ARM64 environment
+        id: environment
+        run: |
+          mkdir -p artifacts/logs
+          docker build -t f50-kernel-build .
+          docker volume create f50-kernel-source
+          docker image inspect f50-kernel-build > artifacts/build-image.json
+      - name: Compile and verify kernel and modules
+        env:
+          KV: ${{ matrix.kernel }}
+        run: |
+          docker run --rm -e KV \
+            -v f50-kernel-source:/src \
+            -v "$PWD/upstream-source/upstream:/work" \
+            -v "$PWD/upstream-source:/source" \
+            -v "$PWD:/project" \
+            f50-kernel-build bash /project/scripts/build.sh
+      - name: Collect actual compiler diagnostics
+        if: ${{ always() && steps.environment.outcome == 'success' }}
+        env:
+          KV: ${{ matrix.kernel }}
+        run: |
+          docker run --rm -e KV \
+            -v f50-kernel-source:/src \
+            -v "$PWD/upstream-source/upstream:/work" \
+            -v "$PWD:/project" \
+            f50-kernel-build bash /project/scripts/collect-logs.sh
+      - name: Upload bundle and verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f50-kernel-${{ matrix.kernel }}
+          path: artifacts/
+          include-hidden-files: true
+          if-no-files-found: error
