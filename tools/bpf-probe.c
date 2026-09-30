@@ -26,7 +26,7 @@ enum {
     LOOP_CALLBACK_INSN = 8,
     LOOP_INSN_COUNT = 10,
     LOOP_FUNC_RELATIVE = LOOP_CALLBACK_INSN - LOOP_FUNC_INSN - 1,
-    TC_CONTINUE = 0,
+    TC_RESULT_OK = 0,
     CGROUP_ALLOW = 1
 };
 
@@ -49,13 +49,13 @@ enum {
     EXIT_INSN
 
 static const struct bpf_insn tc_program[] = {
-    MOV64(BPF_REG_0, TC_CONTINUE), EXIT_INSN
+    MOV64(BPF_REG_0, TC_RESULT_OK), EXIT_INSN
 };
 static const struct bpf_insn cgroup_program[] = {
     MOV64(BPF_REG_0, CGROUP_ALLOW), EXIT_INSN
 };
 static const struct bpf_insn tc_loop_program[] = {
-    LOOP_PROGRAM(TC_CONTINUE)
+    LOOP_PROGRAM(TC_RESULT_OK)
 };
 static const struct bpf_insn cgroup_loop_program[] = {
     LOOP_PROGRAM(CGROUP_ALLOW)
@@ -129,8 +129,8 @@ static struct inspection inspect_program(int fd)
 
 static int verify_info(const struct probe *probe, const struct inspection *result)
 {
-    const size_t required = offsetof(struct bpf_prog_info, jited_prog_len)
-                            + sizeof(result->info.jited_prog_len);
+    const size_t required = offsetof(struct bpf_prog_info, xlated_prog_len)
+                            + sizeof(result->info.xlated_prog_len);
     if (result->error)
         return report_error(probe, "GET_INFO", result->error);
     if (result->returned_bytes < required || result->info.type != (__u32)probe->type) {

@@ -16,7 +16,8 @@ HASH_CHUNK_BYTES = 1024 * 1024
 TOOL_TIMEOUT_SECONDS = 60
 ELF_HEADER = struct.Struct('<16sHHIQQQIHHHHHH')
 SECTION_HEADER = struct.Struct('<IIQQQQIIQQ')
-EM_AARCH64, ET_EXEC, ET_REL = 183, 2, 1
+EM_AARCH64, ET_EXEC, ET_REL, ET_DYN = 183, 2, 1, 3
+ELF_TYPE_NAMES = {ET_EXEC: 'ET_EXEC', ET_REL: 'ET_REL', ET_DYN: 'ET_DYN'}
 SHN_XINDEX, SHT_NULL, SHT_NOBITS = 65535, 0, 8
 EXPECTED_MODULES = frozenset('''mali_kbase sblock_bridge sbuf_bridge seth sipa-core
 sipa-dele sipa-sys sipa_eth sipc-core sipx slog_bridge spipe spool sprd-sipc-virt-bus
@@ -106,13 +107,15 @@ def inspect_elf(path, expected_type):
         header = ELF_HEADER.unpack(read_range(stream, 0, ELF_HEADER.size))
         require(header[0].startswith(b'\x7fELF\x02\x01'), f'{path}: not little-endian ELF64')
         require(header[2] == EM_AARCH64, f'{path}: machine {header[2]}, expected AArch64')
-        require(header[1] == expected_type, f'{path}: wrong ELF type {header[1]}')
+        require(header[1] == expected_type,
+                f'{path}: wrong ELF type {header[1]}, expected {expected_type}')
         sections = read_sections(stream, header)
     length = path.stat().st_size
     for name, section in sections.items():
         require(section['type'] == SHT_NOBITS or section['offset'] + section['size'] <= length,
                 f'{path}: {name} extends past EOF')
-    return sections
+    return sections, {'type': header[1], 'type_name': ELF_TYPE_NAMES[header[1]],
+                      'machine': header[2]}
 
 
 def file_record(path):
@@ -151,11 +154,20 @@ def extract_btf(path, section, output):
     return file_record(target)
 
 
+def kernel_elf_type(config):
+    require(config.get('CONFIG_ARM64') == 'y', 'Kernel .config must identify ARM64')
+    relocatable = config.get('CONFIG_RELOCATABLE')
+    require(relocatable in ('y', 'n'), 'CONFIG_RELOCATABLE must be explicitly y or n')
+    # Both pinned ARM64 Makefiles add -shared only for CONFIG_RELOCATABLE=y.
+    return ET_DYN if relocatable == 'y' else ET_EXEC
+
+
 def verify_kernel(paths, expected_release):
     release_file = paths.build_dir / 'include/config/kernel.release'
     require(release_file.read_text().strip() == expected_release, 'Generated kernel.release mismatch')
     kernel = paths.build_dir / 'vmlinux'
-    sections = inspect_elf(kernel, ET_EXEC)
+    actual_config = read_config(paths.build_dir / '.config')
+    sections, elf_header = inspect_elf(kernel, kernel_elf_type(actual_config))
     require('.rodata' in sections, 'vmlinux has no .rodata for banner verification')
     with kernel.open('rb') as stream:
         rodata = sections['.rodata']
@@ -165,7 +177,8 @@ def verify_kernel(paths, expected_release):
     btf = sections.get('.BTF')
     decoded = verify_btf(kernel, btf)
     detached = extract_btf(kernel, btf, paths.output)
-    return {'release': expected_release, 'elf_machine': 'AArch64', 'btf_section': btf,
+    return {'release': expected_release, 'elf_machine': 'AArch64', 'elf_header': elf_header,
+            'config_relocatable': actual_config['CONFIG_RELOCATABLE'], 'btf_section': btf,
             'btf_type_checks': decoded, 'detached_btf': detached}
 
 
@@ -176,7 +189,7 @@ def verify_modules(directory, expected_release):
             f'missing={sorted(EXPECTED_MODULES - names)}, extra={sorted(names - EXPECTED_MODULES)}')
     results, all_vermagic = [], set()
     for path in modules:
-        sections = inspect_elf(path, ET_REL)
+        sections, elf_header = inspect_elf(path, ET_REL)
         require(not any(name.startswith(('.debug', '.zdebug')) for name in sections),
                 f'{path}: DWARF remains; validate after strip --strip-debug')
         for name in ('.modinfo', '.symtab'):
@@ -185,7 +198,8 @@ def verify_modules(directory, expected_release):
         require(vermagic.split() and vermagic.split()[0] == expected_release,
                 f'{path}: wrong vermagic {vermagic!r}')
         all_vermagic.add(vermagic)
-        results.append(dict(file_record(path), elf_machine='AArch64', vermagic=vermagic))
+        results.append(dict(file_record(path), elf_machine='AArch64',
+                            elf_header=elf_header, vermagic=vermagic))
     require(len(all_vermagic) == 1, f'Module vermagic flags disagree: {sorted(all_vermagic)}')
     return results
 
