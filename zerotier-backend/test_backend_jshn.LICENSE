@@ -1,0 +1,23 @@
+Public test fixture: test_backend_jshn.sh
+Project: OpenWrt libubox, companion shell library for jshn.
+Commit: 7dd127841e82eb1cfb61185da37dde7b9bd9ba6d
+Unmodified source:
+https://raw.githubusercontent.com/openwrt/libubox/7dd127841e82eb1cfb61185da37dde7b9bd9ba6d/sh/jshn.sh
+SHA256: 89fb5871dc9f02e952168da2dd311286d5a2fdd4dd39558557611063129c4fec
+
+ISC notice from the companion jshn implementation at the same commit:
+https://github.com/openwrt/libubox/blob/7dd127841e82eb1cfb61185da37dde7b9bd9ba6d/jshn.c#L1-L15
+
+Copyright (C) 2011-2013 Felix Fietkau <nbd@openwrt.org>
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.

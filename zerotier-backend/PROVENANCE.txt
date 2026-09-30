@@ -1,0 +1,102 @@
+F50 ZeroTier backend p2
+======================
+
+Scope
+-----
+This is a packaging/script adaptation of official OpenWrt ZeroTier 1.16.0 for
+the existing F50 1.16.0_p1-r1 installation. The daemon and both CLI symlinks
+remain byte-for-byte unchanged. No configuration is added or migrated. The
+original official /etc/config template (including its example network) and
+conffile metadata remain in the APK; apk preserves the existing modified user
+configuration. The explicit package hooks do not execute bundled uci-defaults,
+and package installation must not start or enable the daemon.
+
+Base evidence
+-------------
+Official source APK SHA256:
+641621f430cd0bb9fa49f285ab02c8d05c9c017d601072201d5d8061c5f4149f
+Official init SHA256:
+babca17d5a939bfdefb40338670f317819981405082a119e5e45d3f0ea579a86
+
+The four firewall controls were compared with ImmortalWrt packages commit
+6d68ffeb270860be5d73ee2898d58e7c6019d9a4 (that tree packages 1.16.2):
+https://github.com/immortalwrt/packages/tree/6d68ffeb270860be5d73ee2898d58e7c6019d9a4/net/zerotier/files
+Its persistent UCI deletion scripts, blanket networks.d pruning, direct nft
+insertion, and primary TCP control-plane opening are NOT imported.
+
+Runtime integration evidence
+----------------------------
+The deployed rootfs uses firewall4 2025.03.17~b6e51575-r2 and procd
+2026.03.13~58eb263d-r1. Its fw4.uc accepts service-level data.firewall arrays.
+Rules use type=rule, src/dest='*', device/direction and explicit proto=all.
+NAT uses type=nat, device (output interface), family=any, target=MASQUERADE.
+
+https://github.com/openwrt/procd/blob/58eb263d/service/service.c
+set_data without an instance changes service metadata, preserving processes
+and triggers. It emits service.data.update; firewall listens for that event.
+The helper also checks a synchronous fw4 reload result. Stopping reloads fw4
+after procd deletes its service data. Only this service's firewall array is
+replaced, with other service data retained; no persistent firewall UCI or user
+LAN/ZeroTier zone/forwarding is edited.
+
+SHA256 of public files verified in the release rootfs:
+usr/share/ucode/fw4.uc
+148ded17db6a8984e97875c8e60ed7e4ab4c475fbd84a31bba6b543190b4e524
+etc/rc.common
+dd8ae95c78d10cccf78cb487874f163ace4c1ee14dace05fe28393b19ba639e4
+lib/functions/procd.sh
+496d6c5246390db3c514ca1dc9c34305f5806fb59cc627127072617ffd0719e1
+etc/init.d/firewall
+72977b5e4aab0e2eacaebeb47978c7da27ea08742919773c13a81bf8bb170621
+usr/share/libubox/jshn.sh
+89fb5871dc9f02e952168da2dd311286d5a2fdd4dd39558557611063129c4fec
+
+Behavior contract
+-----------------
+Missing network.enabled remains 1, matching the original backend's joining
+all configured networks. allow_managed/global/default/dns defaults remain
+1/0/0/0. Missing fw_* is 0: no added rules. Disabling these options does not
+revoke a user's independent firewall rules.
+
+Global fw_allow_input permits only actual primary/secondary UDP data ports.
+The TCP listener is the HTTP control plane, not required for normal overlay
+transport (ZeroTier 1.16.0 service/OneService.cpp).
+Network input permits that interface's traffic to the router; forward permits
+both directions; masquerade applies to traffic leaving that ZeroTier device,
+for IPv4 and IPv6. Device-restriction lists from other forks are rejected when
+nonempty because this UI/backend contract does not silently approximate them.
+
+Network files are removed only for currently disabled UCI IDs or IDs previously
+recorded by this backend in /etc/zerotier-f50/network-ids. Unknown persistent
+network files are preserved. Thus networks added manually outside UCI can
+remain joined. In copy_config_path mode only the runtime copy is changed.
+The owned-ID ledger contains network IDs, never identity material.
+
+Configuration paths and supplied identities are validated with errors exposed.
+Existing nonempty identity is retained; a candidate is checked through the
+real idtool in a mode-0600 temporary file before replacement. The official
+generate-on-empty behavior remains, so UI blank input must mean unchanged.
+No live identity or device configuration is included in this repository.
+
+Validation boundary
+-------------------
+Tests execute real shell helper functions in isolated temporary directories.
+UCI/ubus/CLI command inputs are explicit test boundaries; these do not claim
+actual routing, daemon authentication or kernel nft validation. Firewall tests
+use the public real jshn shell library with a documented JSON C-tool boundary.
+Linux CI must execute the real symlink/persistent-directory test, which cannot
+run under this Windows account's missing native symlink permission.
+Run: python3 -m unittest discover -s zerotier-backend -p 'test_backend*.py' -v
+Test dependency: Python standard library, bash and real ucode in Linux CI.
+Production uses BusyBox sh, procd/UCI, jshn, ucode, ubus, flock, fw4, and the
+existing ZeroTier executables. The final JSON merge uses ucode, not jshn's
+lossy key/number conversion, to retain other service metadata.
+Actual device jshn/fw4 rendering remains a separate deployment verification.
+
+Public test-library attribution
+------------------------------
+test_backend_jshn.sh is unmodified OpenWrt libubox sh/jshn.sh from commit
+7dd127841e82eb1cfb61185da37dde7b9bd9ba6d. Its ISC notice, fixed source URL and
+SHA256 are recorded in test_backend_jshn.LICENSE. It is a public source file,
+not a device configuration export. The library is used only by tests and is
+not installed as part of the adapted package.

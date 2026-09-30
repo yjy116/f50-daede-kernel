@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { configurationHarness } = require('./test_ui_helpers.cjs');
 
 const root = path.join(__dirname, 'root');
 const commonPath = path.join(root, 'www/luci-static/resources/zerotier/common.js');
@@ -25,34 +26,64 @@ test('service status detects any running instance and exposes malformed RPC data
     assert.throws(() => common.serviceRunning({ zerotier: { instances: { bad: { running: 'false' } } } }), /服务/);
 });
 
-test('configuration fields use official defaults and integer port validation', () => {
-    const sections = [];
-    class Map {
-        section(kind, ...args) {
-            const section = { kind, args, options: [], option(type, name) {
-                const option = { type, name };
-                this.options.push(option);
-                return option;
-            } };
-            sections.push(section);
-            return section;
-        }
-        render() { return sections; }
-    }
-    const form = { Map, NamedSection: 'named', GridSection: 'grid', Flag: 'flag', Value: 'value' };
-    const source = fs.readFileSync(path.join(root, 'www/luci-static/resources/view/zerotier/config.js'), 'utf8');
-    const view = new Function('form', 'view', 'common', '_', source)(form, { extend: x => x }, common, x => x);
-    view.render();
-    assert.deepEqual(sections[0].args.slice(0, 2), ['global', 'zerotier']);
-    assert.equal(sections[0].options.find(o => o.name === 'port').datatype, 'port');
-    assert.deepEqual(sections[1].options.map(o => o.name), [
-        'id', 'allow_managed', 'allow_global', 'allow_default', 'allow_dns'
-    ]);
-    const flags = sections.flatMap(s => s.options).filter(o => o.type === 'flag');
-    flags.forEach(flag => {
+test('new firewall controls default off while existing networks remain enabled', async () => {
+    const { sections, view } = configurationHarness();
+    await view.render();
+    const global = sections.find(s => s.kind === 'named');
+    const networks = sections.find(s => s.kind === 'grid');
+    assert.deepEqual(global.args.slice(0, 2), ['global', 'zerotier']);
+    assert.equal(global.options.find(o => o.name === 'port').datatype, 'port');
+    assert.equal(networks.anonymous, false);
+    assert.equal(networks.options.find(o => o.name === 'enabled')?.default, '1');
+    assert.equal(networks.options.find(o => o.name === 'allow_managed').default, '1');
+    const firewallFlags = sections.flatMap(s => s.options).filter(o => o.name.startsWith('fw_'));
+    assert.equal(firewallFlags.length, 4);
+    firewallFlags.forEach(flag => {
+        assert.equal(flag.default, '0');
         assert.equal(flag.rmempty, false);
-        assert.equal(flag.default, flag.name === 'allow_managed' ? '1' : '0');
     });
+    assert.equal(global.options.find(o => o.name === 'copy_config_path')?.default, '0');
+});
+
+test('configuration styling is enclosed in its own view and loads only its stylesheet', async () => {
+    const { view } = configurationHarness();
+    const rendered = await view.render();
+    assert.equal(rendered.attributes.class, 'zerotier-view');
+    assert.equal(rendered.children[0].tag, 'link');
+    assert.equal(rendered.children[0].attributes.href, '/luci-static/resources/zerotier/appearance.css');
+    assert.equal(rendered.children[1].tag, 'div');
+});
+
+test('render and an empty secret edit preserve the existing identity without exposing it', async () => {
+    const currentIdentity = 'sensitive-test-identity';
+    const writes = [];
+    const data = { get: () => currentIdentity, set: (...args) => writes.push(args),
+        unset: () => { throw new Error('Identity must not be removed by an empty edit'); } };
+    const { sections, view } = configurationHarness(data);
+    const rendered = await view.render();
+    const secret = sections.find(s => s.kind === 'named').options.find(o => o.name === 'secret');
+    assert.ok(secret, 'A masked identity replacement field is required');
+    assert.equal(secret.password, true);
+    assert.equal(secret.cfgvalue('global'), '');
+    secret.write('global', '');
+    secret.remove('global');
+    assert.deepEqual(writes, []);
+    assert.equal(JSON.stringify(rendered).includes(currentIdentity), false);
+    secret.write('global', 'replacement-test-identity');
+    assert.deepEqual(writes, [['zerotier', 'global', 'secret', 'replacement-test-identity']]);
+});
+
+test('network duplicate validation includes both existing anonymous and named rows', async () => {
+    const data = { sections: () => [{ '.name': 'cfg012345' }, { '.name': 'travel' }] };
+    const { sections, view } = configurationHarness(data);
+    await view.render();
+    const network = sections.find(s => s.kind === 'grid');
+    const id = network.options.find(o => o.name === 'id');
+    id.formvalue = section => section === 'travel' ? 'abcdef1234567890' : undefined;
+    id.cfgvalue = section => section === 'cfg012345' ? '1234567890abcdef' : undefined;
+    assert.equal(id.validate('cfg012345', '1234567890abcdef'), true);
+    assert.notEqual(id.validate('cfg012345', 'ABCDEF1234567890'), true);
+    assert.notEqual(id.validate('travel', '1234567890abcdef'), true);
 });
 
 test('CLI failures, bad JSON and wrong schema remain visible', () => {

@@ -1,11 +1,11 @@
 {
-  "adaptation": "F50 Chinese UI for the official OpenWrt ZeroTier 1.16.0 backend",
+  "adaptation": "F50 Chinese reference-layout UI with reviewed ZeroTier p2 backend controls",
   "base_project": "immortalwrt/luci",
   "base_commit": "d6167ea0645cbd1327708d85f94824f42d0eb872",
   "base_path": "applications/luci-app-zerotier",
   "license": "GPL-3.0-only",
-  "backend_package": "zerotier=1.16.0_p1-r1",
+  "backend_package": "zerotier=1.16.0_p2-r1",
   "official_source_apk_sha256": "641621f430cd0bb9fa49f285ab02c8d05c9c017d601072201d5d8061c5f4149f",
   "official_init_sha256": "babca17d5a939bfdefb40338670f317819981405082a119e5e45d3f0ea579a86",
-  "configuration_policy": "No configuration payload, no uci-defaults, no automatic enable/join/firewall changes"
+  "configuration_policy": "UI install does not enable/join/change configuration; explicit Save & Apply uses p2 per-network and owned fw4 controls; blank identity input retains the existing identity"
 }

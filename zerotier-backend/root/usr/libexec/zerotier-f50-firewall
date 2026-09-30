@@ -1,0 +1,20 @@
+#!/bin/sh
+. /lib/functions.sh
+. /usr/share/libubox/jshn.sh
+. /usr/libexec/zerotier-f50/config.sh
+. /usr/libexec/zerotier-f50/firewall.sh
+
+zt_firewall_main() {
+	config_load zerotier || return 1
+	case "${1:-}" in
+		refresh) [ "$#" -le 2 ] && zt_fw_refresh "${2:-}" ;;
+		clear) [ "$#" = 1 ] && zt_fw_clear ;;
+		*) zt_error 'Usage: zerotier-f50-firewall refresh [removed-device] | clear' ;;
+	esac
+}
+
+# Serialize startup, configuration and hotplug refreshes on one service owner.
+(
+	flock -x 9 || { zt_error 'Cannot lock firewall publication'; exit 1; }
+	zt_firewall_main "$@"
+) 9>/var/lock/zerotier-f50-firewall.lock

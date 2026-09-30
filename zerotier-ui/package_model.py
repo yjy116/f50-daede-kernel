@@ -9,7 +9,7 @@ sys.path.insert(0, str(HERE.parent / 'packaging'))
 from apk3 import require
 
 PACKAGE_NAME = 'luci-app-zerotier'
-PACKAGE_VERSION = '1.0.0_p1-r1'
+PACKAGE_VERSION = '1.1.0_p2-r1'
 FILE_MODE = 0o644
 DIRECTORY_MODE = 0o755
 DERIVED = {'hashes', 'installed-size', 'file-size'}
@@ -17,10 +17,10 @@ DERIVED = {'hashes', 'installed-size', 'file-size'}
 
 def package_info():
     return {'name': PACKAGE_NAME, 'version': PACKAGE_VERSION, 'arch': 'noarch',
-            'description': 'F50 Chinese LuCI UI for official ZeroTier 1.16.0; F50 adaptation p1',
+            'description': 'F50 Chinese ZeroTier configuration and interface UI; p2 backend controls',
             'license': 'GPL-3.0-only', 'origin': 'f50/zerotier-ui',
             'url': 'https://github.com/yjy116/f50-daede-kernel',
-            'depends': ['luci-base', 'rpcd-mod-file', 'zerotier=1.16.0_p1-r1']}
+            'depends': ['luci-base', 'rpcd-mod-file', 'zerotier=1.16.0_p2-r1']}
 
 
 def stage_files(destination):

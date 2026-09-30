@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   package:
@@ -14,12 +15,23 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - name: Retrieve pinned TUN capability evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 36672813155 --repo yjy116/f50-daede-kernel --name f50-kernel-7.2.8 --dir kernel-evidence
+          printf '%s  %s\n' ba58a7af264857e5254165ef4de240bf15dcf3b6a709f8f916a097fc71dbbf05 kernel-evidence/kernel-validation.json | sha256sum --check --strict -
       - name: Build and test packaging environment
         run: docker build -f zerotier-ui/Dockerfile -t f50-zerotier-ui .
-      - name: Package, audit and sign with a temporary key
+      - name: Package, audit and sign backend plus UI
         run: |
           mkdir -p zerotier-ui-artifacts
-          docker run --rm -v "$PWD/zerotier-ui-artifacts:/out" f50-zerotier-ui --output /out
+          docker run --rm -v "$PWD/kernel-evidence:/evidence:ro" \
+            -v "$PWD/zerotier-ui-artifacts:/out" \
+            --entrypoint python3 f50-zerotier-ui /zerotier-backend/build.py \
+            --kernel-validation /evidence/kernel-validation.json \
+            --kernel-config /evidence/kernel.config --output /out/backend
+          docker run --rm -v "$PWD/zerotier-ui-artifacts:/out" f50-zerotier-ui --output /out/ui
       - name: Upload signed APK and public audit evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

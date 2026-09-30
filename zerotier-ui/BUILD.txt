@@ -1,44 +1,33 @@
-F50 ZeroTier 中文 LuCI：VPN → ZeroTier → 配置 / 运行状态
+F50 ZeroTier 中文界面 p2：VPN → ZeroTier → 配置 / 接口信息
 
-任务追踪复用 F50/.codex-tasks/f50-openwrt/TODO.csv 第12项；不另建重复台账。
-源界面取自 ImmortalWrt luci commit d6167ea0645cbd1327708d85f94824f42d0eb872，
-路径 applications/luci-app-zerotier。GPL-3.0-only 及原版权头保留。
+复用主项目总台账16–18。界面布局按用户参考图补齐；不复制参考图的Network ID、开关状态或密钥。使用 LuCI 原生控件和仅在 ZeroTier 页面生效的浅灰背景、圆角卡片与表格样式；不替换全站主题。
+前端源自 ImmortalWrt luci d6167ea0645cbd1327708d85f94824f42d0eb872，保留 GPL-3.0-only 和原版权。后端适配见 ../zerotier-backend/。
 
-适配范围
-- global: enabled、port；NamedSection global，类型 zerotier。
-- network: id、allow_managed、allow_global、allow_default、allow_dns。
-- managed 默认1，其余开关默认0；rmempty=false确保关闭写0。
-- 不显示官方后端不读取的 network.enabled 或 fw_*。
-- 不读取 identity.secret，不提供 secret 表单；仅CLI公开状态投影。
-- 保留既有的其它UCI选项；不自动创建/删除配置节或示例网络。
-- 如有自定义持久配置目录，其旧networks.d文件不会随UCI表项删除而被清理。
-- 保存应用使用LuCI标准流程。官方init的procd_add_reload_trigger zerotier收到
-  config.change后调用reload_service，stop/start按global.enabled生效。
-- 状态只读：service.list；zerotier-cli -j info；zerotier-cli -j listnetworks。
-  ACL只授权两条完整命令，不授权裸CLI或join/leave/set。未知/失败响应显示错误。
+配置与状态
+- 实时状态条；全局启用、监听端口、客户端密钥、本地配置路径、配置目录、复制目录、守护进程入站开关、ZeroTier 管理中心链接。
+- 具名网络表：启用、网络ID、四个allow选项、入站、转发、IP动态伪装。
+- 原有未设置 network.enabled 的网络继续默认启用，符合旧官方后端语义。
+- 新 fw_* 默认0，只控制本服务附加规则，不撤销用户已有的手工防火墙规则。
+- copy_config_path仍默认0，保留官方原语义，不照参考图改成1。
+- 客户端密钥框始终为空，现有身份不会进入输入框。留空保存不改旧值，只有明确输入新密钥才替换；页面不会读取 identity.secret 文件。
+- 接口信息显示节点公开状态、网络状态/接口/地址。CLI错误和RPC失败直接显示，不能把服务运行误报为已获网络授权或可通信。
+- ACL保留 exact CLI -j info / -j listnetworks、service.list、zerotier UCI，不授予裸CLI、join/leave/set或通用文件读取权限。
 
-构建（仓库根目录）
-  docker build -f zerotier-ui/Dockerfile -t f50-zerotier-ui .
-  docker run --rm -v /absolute/empty/output:/out f50-zerotier-ui --output /out
-独立Dockerfile.dockerignore覆盖仓库根忽略规则，未改动通用packaging源码。
-同等云入口：Actions → F50 Chinese ZeroTier LuCI → Run workflow。
+构建与依赖
+- UI：luci-app-zerotier 1.1.0_p2-r1，noarch。
+- 精确依赖 zerotier=1.16.0_p2-r1、luci-base、rpcd-mod-file。
+- 核心p2保留官方1.16.0二进制、配置模板及符号链接，仅更改审查过的init/helper/生命周期脚本和包元数据；不能把UI单独装到p1后端。
+- GitHub Actions → F50 Chinese ZeroTier LuCI：固定成功内核证据确认TUN=y，两包分别构建/审计/临时密钥签名，输出backend/和ui/两目录。
+- 每包导出自己的公钥；安装时两个公钥使用不同文件名放入临时keys目录。不覆盖系统信任库，不关闭验签，不导出私钥。
 
-包名 luci-app-zerotier，版本1.0.0_p1-r1，架构noarch；_p1为F50适配版本，
-description/origin及manifest明确F50身份。精确依赖zerotier=1.16.0_p1-r1，
-另依赖luci-base与rpcd-mod-file。不是官方OpenWrt或ImmortalWrt二进制发行包。
-实际apk mkpkg使用apk-tools3.0.8-r0/compat3.0.0_pre1/deflate:0；比较每个文件
-内容SHA、模式、所有者、mtime、目录ACL、脚本字节与依赖，再验证包签名。
-每轮ECDSA私钥仅保存在容器/dev/shm，输出仅APK、公钥、manifest和SHA256SUMS。
+本地检查
+  node --test zerotier-ui/test_ui.cjs zerotier-ui/test_status.cjs
+  python3 -B -m unittest discover -s zerotier-ui -p 'test_package.py'
+  python3 -B -m unittest discover -s zerotier-backend -p 'test_*.py'
+每个后端单元测试进程外部超时60秒。Linux云中执行真实符号链接测试。
+云构建只证明包检查；真实浏览器渲染、保存读回、配置保持、服务/防火墙行为需设备验证，SIM/远端授权/生产VPN通信不能由构建通过替代。
 
 安装行为
-post-install/post-upgrade调用OpenWrt标准add_group_and_user/default_postinst。
-包内没有init脚本、配置文件或uci-defaults，不启动/启用/加入ZeroTier网络。
-然后清除可再生成的LuCI缓存并重启rpcd/uhttpd使菜单/ACL生效；网页会短暂中断，
-登录会话可能需刷新。失败明确返回，未用“|| true”隐藏。
-
-验证
-  node --test zerotier-ui/test_ui.cjs
-  python3 -B -m unittest discover -s zerotier-ui -p 'test_package.py'
-本地测试覆盖ID和重复项、CLI失败与JSON结构、权限和菜单、APK审计拒绝变异。
-云构建通过仅证明包构建/签名/静态审计。实际安装、浏览器渲染、保存应用、服务
-重载触发、用户自己的网络授权/IP与通信仍需设备验收，不能由静态测试替代。
+- UI没有/etc/config或uci-defaults；post-install只走标准UI生命周期和刷新LuCI缓存、rpcd/uhttpd，管理页会短暂断开，随后可重新登录。
+- 核心p2更新不会执行default_postinst，它会无条件启动init并提交所有UCI。仅注册原包用户，保留已有boot links和配置，不启动守护进程或加入网络。
+- 此核心升级针对已经安装p1的F50；不是通用官方发行包，也不声称新装设备的开机服务状态已验证。实际启用/停用发生于用户保存应用或开机流程。

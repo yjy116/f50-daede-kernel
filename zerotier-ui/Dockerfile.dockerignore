@@ -3,5 +3,7 @@
 !packaging/**
 !zerotier-ui/
 !zerotier-ui/**
+!zerotier-backend/
+!zerotier-backend/**
 **/__pycache__/
 **/*.pyc

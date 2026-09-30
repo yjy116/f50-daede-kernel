@@ -1,0 +1,8 @@
+[
+  "etc/init.d/zerotier",
+  "etc/hotplug.d/net/90-zerotier-f50",
+  "usr/libexec/zerotier-f50/config.sh",
+  "usr/libexec/zerotier-f50/networks.sh",
+  "usr/libexec/zerotier-f50/firewall.sh",
+  "usr/libexec/zerotier-f50-firewall"
+]
