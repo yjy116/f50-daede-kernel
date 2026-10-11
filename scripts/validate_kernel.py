@@ -2,6 +2,7 @@
 """Validate real ARM64 kernel artifacts; requires pahole, modinfo and build tools."""
 import argparse
 import hashlib
+import io
 import json
 import os
 import re
@@ -119,6 +120,20 @@ def inspect_elf(path, expected_type):
                       'machine': header[2]}
 
 
+def module_identity(data):
+    stream = io.BytesIO(data)
+    header = ELF_HEADER.unpack(read_range(stream, 0, ELF_HEADER.size))
+    require(header[0].startswith(b'\x7fELF\x02\x01'), 'Module is not little-endian ELF64')
+    require(header[1] == ET_REL and header[2] == EM_AARCH64, 'Module is not ARM64 ET_REL')
+    section = read_sections(stream, header).get('.modinfo')
+    require(section and section['size'] > 0, 'Module has no .modinfo')
+    entries = read_range(stream, section['offset'], section['size']).split(b'\0')
+    names = [entry[5:].decode('ascii') for entry in entries if entry.startswith(b'name=')]
+    require(len(names) == 1 and re.fullmatch(r'[A-Za-z0-9_]+', names[0]),
+            'Module must contain exactly one valid .modinfo name')
+    return names[0]
+
+
 def file_record(path):
     digest = hashlib.sha256()
     with path.open('rb') as stream:
@@ -190,6 +205,9 @@ def verify_modules(directory, expected_release, expected_modules=EXPECTED_MODULE
             f'missing={sorted(expected_modules - names)}, extra={sorted(names - expected_modules)}')
     results, all_vermagic = [], set()
     for path in modules:
+        internal_name = module_identity(path.read_bytes())
+        require(internal_name == path.stem.replace('-', '_'),
+                f'{path}: internal module name mismatch: {internal_name}')
         sections, elf_header = inspect_elf(path, ET_REL)
         require(not any(name.startswith(('.debug', '.zdebug')) for name in sections),
                 f'{path}: DWARF remains; validate after strip --strip-debug')
@@ -200,7 +218,7 @@ def verify_modules(directory, expected_release, expected_modules=EXPECTED_MODULE
                 f'{path}: wrong vermagic {vermagic!r}')
         all_vermagic.add(vermagic)
         results.append(dict(file_record(path), elf_machine='AArch64',
-                            elf_header=elf_header, vermagic=vermagic))
+                            elf_header=elf_header, vermagic=vermagic, internal_name=internal_name))
     require(len(all_vermagic) == 1, f'Module vermagic flags disagree: {sorted(all_vermagic)}')
     return results
 

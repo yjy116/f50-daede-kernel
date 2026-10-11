@@ -1,7 +1,8 @@
 # F50 kernels with BTF and eBPF
 
 The current independent [7.2.9 BPF/JIT/BTF candidate](scripts/BPF72.md) builds
-MU300 `v2026.10.17` with all 376 upstream modules and suffix `-f50-bpf1`.
+MU300 `v2026.10.17` with 379 modules and suffix `-f50-bpf1`, repairing three
+case-colliding module pairs in the official 376-file bundle.
 Its manual workflow is **F50 Linux 7.2.9 BPF JIT and BTF**; the historical builds
 below remain available unchanged.
 

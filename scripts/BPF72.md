@@ -10,9 +10,21 @@ WLAN checksum, WCN recovery, boot-slot and SD support are retained; the old WLAN
 source patch is not reapplied. `config/bpf72.config` replaces only its listed
 configuration keys. It enables BPF JIT, kernel BTF and tracing. Honk's BPF/cgroup/
 TC/network-namespace and NFQUEUE requirements are checked in the final config.
-`NET_ACT_BPF`, `NFT_QUEUE` and `NETFILTER_NETLINK_QUEUE` remain modules; all 376
-official module names must remain present, with matching architecture and new
-vermagic. vmlinux BTF is decoded with pahole and exported separately.
+`NET_ACT_BPF`, `NFT_QUEUE` and `NETFILTER_NETLINK_QUEUE` remain modules. The
+candidate must contain exactly 379 modules, with matching architecture, internal
+module names and new vermagic. vmlinux BTF is decoded with pahole and exported
+separately.
+
+The pinned official bundle has 376 filenames, but three entries contain the
+opposite-case module's payload: `xt_dscp.ko` contains `name=xt_DSCP`, `xt_HL.ko`
+contains `name=xt_hl`, and `xt_tcpmss.ko` contains `name=xt_TCPMSS`. Both the official
+and candidate configs select all six corresponding `NETFILTER_XT_MATCH_*` and
+`NETFILTER_XT_TARGET_*` options as modules. Native Linux therefore builds all six;
+this repairs the release's case-collision loss rather than adding new options.
+`prepare-reference` verifies all 376 ELF identities, records precisely these three
+known mismatches, and derives the strict 379-name candidate inventory. Candidate
+and package checks reject any missing/extra name, internal-name mismatch or
+payload mismatch. Keep module archives intact on case-insensitive filesystems.
 
 The ARM64 static `bpf72-probe` is compiled before the kernel. On the F50 it checks
 map operations, SOCKET_FILTER/SCHED_CLS load and JIT, an isolated socket-filter
