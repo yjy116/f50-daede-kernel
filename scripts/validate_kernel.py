@@ -10,7 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-KERNEL_VERSIONS = ('6.18.54', '7.2.8')
+KERNEL_VERSIONS = ('6.18.54', '7.2.8', '7.2.9')
 LOCAL_VERSION = '-f50-dae1'
 HASH_CHUNK_BYTES = 1024 * 1024
 TOOL_TIMEOUT_SECONDS = 60
@@ -47,8 +47,8 @@ def run_tool(arguments):
 def read_config(path):
     values = {}
     for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
-        match = re.fullmatch(r'(CONFIG_[A-Z0-9_]+)=(.+)', line)
-        disabled = re.fullmatch(r'# (CONFIG_[A-Z0-9_]+) is not set', line)
+        match = re.fullmatch(r'(CONFIG_[A-Za-z0-9_]+)=(.+)', line)
+        disabled = re.fullmatch(r'# (CONFIG_[A-Za-z0-9_]+) is not set', line)
         if not match and not disabled:
             require(not line.strip() or line.startswith('#'), f'{path}:{number}: invalid config line')
             continue
@@ -65,7 +65,8 @@ def verify_config(paths):
     mismatches = {key: {'requested': value, 'actual': actual.get(key, '<missing>')}
                   for key, value in requested.items() if actual.get(key) != value}
     require(not mismatches, 'Final .config did not satisfy requests: ' + json.dumps(mismatches))
-    require(actual.get('CONFIG_LOCALVERSION') == json.dumps(LOCAL_VERSION), 'Wrong LOCALVERSION')
+    suffix = getattr(paths, 'local_version', LOCAL_VERSION)
+    require(actual.get('CONFIG_LOCALVERSION') == json.dumps(suffix), 'Wrong LOCALVERSION')
     require(actual.get('CONFIG_LOCALVERSION_AUTO') == 'n', 'LOCALVERSION_AUTO must be explicitly off')
     return {'requested_values': requested, 'matched_count': len(requested),
             'compiler_config': actual.get('CONFIG_CC_VERSION_TEXT', '<missing>')}
@@ -182,11 +183,11 @@ def verify_kernel(paths, expected_release):
             'btf_type_checks': decoded, 'detached_btf': detached}
 
 
-def verify_modules(directory, expected_release):
+def verify_modules(directory, expected_release, expected_modules=EXPECTED_MODULES):
     modules = sorted(directory.glob('*.ko'))
     names = {path.stem for path in modules}
-    require(names == EXPECTED_MODULES, f'Module manifest mismatch: '
-            f'missing={sorted(EXPECTED_MODULES - names)}, extra={sorted(names - EXPECTED_MODULES)}')
+    require(names == expected_modules, f'Module manifest mismatch: '
+            f'missing={sorted(expected_modules - names)}, extra={sorted(names - expected_modules)}')
     results, all_vermagic = [], set()
     for path in modules:
         sections, elf_header = inspect_elf(path, ET_REL)
@@ -211,12 +212,25 @@ def tool_versions():
     return dict(versions, python=sys.version)
 
 
+def expected_modules(paths):
+    manifest = getattr(paths, 'module_manifest', None)
+    if manifest is None:
+        return EXPECTED_MODULES
+    data = json.loads(manifest.read_text(encoding='utf-8'))
+    names = data.get('module_names')
+    require(isinstance(names, list) and names, 'Reference manifest needs module_names')
+    require(all(isinstance(name, str) and re.fullmatch(r'[A-Za-z0-9_-]+', name)
+                for name in names), 'Invalid reference module name')
+    require(len(names) == len(set(names)), 'Duplicate reference module name')
+    return frozenset(names)
+
+
 def build_report(paths):
-    release = paths.kernel_version + LOCAL_VERSION
+    release = paths.kernel_version + getattr(paths, 'local_version', LOCAL_VERSION)
     tools = tool_versions()
     config = verify_config(paths)
     kernel = verify_kernel(paths, release)
-    modules = verify_modules(paths.module_dir, release)
+    modules = verify_modules(paths.module_dir, release, expected_modules(paths))
     names = ('.config', 'vmlinux', 'arch/arm64/boot/Image', 'System.map', 'Module.symvers',
              'include/config/kernel.release', 'modules.builtin', 'modules.builtin.modinfo')
     artifacts = [file_record(paths.build_dir / name) for name in names]
@@ -229,6 +243,8 @@ def build_report(paths):
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--kernel-version', required=True, choices=KERNEL_VERSIONS)
+    parser.add_argument('--local-version', default=LOCAL_VERSION)
+    parser.add_argument('--module-manifest', type=Path)
     for name in ('build-dir', 'module-dir', 'config-extra', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
     return parser.parse_args()

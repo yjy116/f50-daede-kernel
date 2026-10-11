@@ -1,5 +1,10 @@
 # F50 kernels with BTF and eBPF
 
+The current independent [7.2.9 BPF/JIT/BTF candidate](scripts/BPF72.md) builds
+MU300 `v2026.10.17` with all 376 upstream modules and suffix `-f50-bpf1`.
+Its manual workflow is **F50 Linux 7.2.9 BPF JIT and BTF**; the historical builds
+below remain available unchanged.
+
 Build Linux **6.18.54** and **7.2.8** for the ZTE F50/MU300 using GitHub Actions' native ARM64 runners. Both use the MU300 port at commit `1a69a41ea9d20fadd575e9b082364d61ce5fcf9a`, with an explicit configuration fragment for dae/daed capabilities.
 
 The workflow is started manually from **Actions → F50 kernels with BTF and eBPF → Run workflow**. Each kernel is built independently, including all 31 matching vendor modules. Kernel tarballs, helper bundle and action revisions are pinned. Compiler and container details are recorded with the outputs.

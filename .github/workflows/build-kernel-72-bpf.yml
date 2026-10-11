@@ -1,0 +1,56 @@
+name: F50 Linux 7.2.9 BPF JIT and BTF
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout build definitions
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Checkout matching MU300 release sources
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: dikeckaan/mu300-linux
+          ref: d033b55b5c9d2566a72037118c5fe5cd5707f3fe
+          path: upstream-source
+          persist-credentials: false
+      - name: Verify profile and artifact rejection tests
+        run: timeout 60s python3 -m unittest discover -s scripts -p 'test_bpf72*.py' -v
+      - name: Build native ARM64 environment
+        id: environment
+        run: |
+          mkdir -p artifacts/logs
+          docker build -t f50-bpf72-build .
+          docker volume create f50-bpf72-source
+          docker image inspect f50-bpf72-build > artifacts/build-image.json
+      - name: Compile and verify complete kernel bundle
+        run: |
+          docker run --rm \
+            -v f50-bpf72-source:/src \
+            -v "$PWD/upstream-source/upstream:/work" \
+            -v "$PWD/upstream-source:/source" \
+            -v "$PWD:/project" \
+            f50-bpf72-build bash /project/scripts/build-bpf72.sh
+      - name: Collect actual compiler diagnostics
+        if: ${{ always() && steps.environment.outcome == 'success' }}
+        run: |
+          docker run --rm -e KV=7.2.9 \
+            -v f50-bpf72-source:/src \
+            -v "$PWD/upstream-source/upstream:/work" \
+            -v "$PWD:/project" \
+            f50-bpf72-build bash /project/scripts/collect-logs.sh
+      - name: Upload candidate and verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: f50-kernel-7.2.9-bpf1
+          path: artifacts/
+          include-hidden-files: true
+          if-no-files-found: error
