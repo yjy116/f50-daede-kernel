@@ -1,0 +1,444 @@
+--- a/crates/honk-core/src/ebpf/real/attach.rs
++++ b/crates/honk-core/src/ebpf/real/attach.rs
+@@ -300,7 +300,7 @@
+                 }
+             }
+ 
+-            let wan_egress_prog = Self::wan_program_pair(&ebpf_wan_ifname).1;
++            let wan_egress_prog = Self::wan_program_pair(&ebpf_wan_ifname)?.1;
+             interface_links.push(
+                 Self::attach_tc_owned(
+                     &mut bpf,
+@@ -314,12 +314,8 @@
+ 
+         // Attach the WAN ingress program so replies arriving from the WAN
+         // refresh the reverse-direction conntrack state (the datapath's
+-        // is_wan_ingress_direction tracking for direct flows).  Unlike
+-        // wan_egress — which uses the L3 program because a bond master may
+-        // emit locally-generated egress skbs without an Ethernet header —
+-        // ingress packets always arrive from the wire fully framed, so the
+-        // L2/L3 choice follows the interface type (same judgment as
+-        // attach_wan_egress uses for secondary interfaces).
++        // is_wan_ingress_direction tracking for direct flows). Selection
++        // handles native framing and the F50 SIPA RAWIP reinjection case.
+         //
+         // Single-homed setups share one interface between LAN and WAN and
+         // lan_ingress already owns that ingress hook, so wan_ingress is
+@@ -327,7 +323,7 @@
+         if single_homed {
+             info!("Single-homed interface detected; skipping wan_ingress attach");
+         } else if !ebpf_wan_ifname.is_empty() {
+-            let wan_ingress_prog = Self::wan_program_pair(&ebpf_wan_ifname).0;
++            let wan_ingress_prog = Self::wan_program_pair(&ebpf_wan_ifname)?.0;
+             interface_links.push(
+                 Self::attach_tc_owned(
+                     &mut bpf,
+@@ -655,14 +651,9 @@
+         }
+     }
+ 
+-    /// Pick the ingress/egress program pair for a WAN interface using the
+-    /// same Ethernet detection as the LAN selector.
+-    fn wan_program_pair(iface: &str) -> (&'static str, &'static str) {
+-        if Self::iface_is_ethernet(iface) {
+-            ("wan_ingress_l2", "wan_egress_l2")
+-        } else {
+-            ("wan_ingress_l3", "wan_egress_l3")
+-        }
++    /// Select WAN framing, including the verified F50 SIPA driver exception.
++    fn wan_program_pair(iface: &str) -> anyhow::Result<(&'static str, &'static str)> {
++        super::sipa::wan_program_pair(iface, Self::iface_is_ethernet(iface))
+     }
+ 
+     /// Read the IPv4 address of an interface in big-endian u32, or 0
+@@ -768,20 +759,20 @@
+         if self.interface_hooked(crate::netlink::ifindex_of(ifname).unwrap_or(0), true) {
+             return Ok(());
+         }
+-        let prog = Self::wan_program_pair(ifname).1;
++        let prog = Self::wan_program_pair(ifname)?.1;
+         self.attach_tc_tracked(prog, ifname, aya::programs::TcAttachType::Egress)
+     }
+ 
+     /// Attach WAN ingress to an additional interface (reverse-direction
+-    /// conntrack updates for replies arriving from the WAN).  L2/L3 is
+-    /// chosen by interface type, same as `attach_wan_egress`.
++    /// conntrack updates for replies arriving from the WAN). Framing uses
++    /// the same verified interface identity as `attach_wan_egress`.
+     pub fn attach_wan_ingress(&mut self, ifname: &str) -> anyhow::Result<()> {
+         debug!("Attaching WAN ingress to additional interface: {}", ifname);
+         let _ = aya::programs::tc::qdisc_add_clsact(ifname);
+         if self.interface_hooked(crate::netlink::ifindex_of(ifname).unwrap_or(0), false) {
+             return Ok(());
+         }
+-        let prog = Self::wan_program_pair(ifname).0;
++        let prog = Self::wan_program_pair(ifname)?.0;
+         self.attach_tc_tracked(prog, ifname, aya::programs::TcAttachType::Ingress)
+     }
+ 
+--- a/crates/honk-core/src/ebpf/real/mod.rs
++++ b/crates/honk-core/src/ebpf/real/mod.rs
+@@ -153,6 +153,7 @@
+ #[cfg(feature = "native-api")]
+ pub(crate) mod receive_trace;
+ mod routing;
++mod sipa;
+ mod syscall;
+ #[cfg(test)]
+ mod tests;
+--- /dev/null
++++ b/crates/honk-core/src/ebpf/real/sipa.rs
+@@ -0,0 +1,127 @@
++//! Narrow compatibility adapter for the F50's verified SIPA WAN interface.
++
++use anyhow::Context;
++use std::path::Path;
++
++const F50_SIPA_INTERFACE: &str = "sipa_eth0";
++const ARPHRD_RAWIP: u32 = 519;
++const ETHERNET_ADDRESS_LEN: u32 = 6;
++const L2_PROGRAMS: (&str, &str) = ("wan_ingress_l2", "wan_egress_l2");
++const L3_PROGRAMS: (&str, &str) = ("wan_ingress_l3", "wan_egress_l3");
++const SIPA_PROGRAMS: (&str, &str) = ("wan_ingress_sipa", "wan_egress_l2");
++
++pub(super) fn wan_program_pair(
++    interface: &str,
++    ethernet: bool,
++) -> anyhow::Result<(&'static str, &'static str)> {
++    let programs = program_pair(interface, ethernet, Path::new("/sys"))?;
++    if programs == SIPA_PROGRAMS {
++        tracing::info!(
++            interface,
++            ingress = programs.0,
++            egress = programs.1,
++            "Using verified F50 SIPA framing: Ethernet RX/TX and RAWIP reply reinjection"
++        );
++    }
++    Ok(programs)
++}
++
++fn program_pair(
++    interface: &str,
++    ethernet: bool,
++    sysfs: &Path,
++) -> anyhow::Result<(&'static str, &'static str)> {
++    if ethernet {
++        return Ok(L2_PROGRAMS);
++    }
++    if interface != F50_SIPA_INTERFACE {
++        return Ok(L3_PROGRAMS);
++    }
++    let device = sysfs.join("class/net").join(interface);
++    let kind = read_number(&device.join("type"))?;
++    let address_len = read_number(&device.join("addr_len"))?;
++    anyhow::ensure!(
++        kind == ARPHRD_RAWIP && address_len == ETHERNET_ADDRESS_LEN,
++        "F50 SIPA interface identity mismatch: type={kind}, addr_len={address_len}"
++    );
++    anyhow::ensure!(
++        sysfs.join("module/sipa_eth").is_dir()
++            && sysfs.join("kernel/debug/sipa_eth").join(interface).is_dir(),
++        "F50 SIPA driver evidence missing: require /sys/module/sipa_eth and per-interface debugfs directory"
++    );
++    Ok(SIPA_PROGRAMS)
++}
++
++fn read_number(path: &Path) -> anyhow::Result<u32> {
++    std::fs::read_to_string(path)
++        .with_context(|| format!("read F50 SIPA identity {}", path.display()))?
++        .trim()
++        .parse()
++        .with_context(|| format!("parse F50 SIPA identity {}", path.display()))
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn fixture() -> tempfile::TempDir {
++        let root = tempfile::tempdir().unwrap();
++        let interface = root.path().join("class/net/sipa_eth0");
++        std::fs::create_dir_all(&interface).unwrap();
++        std::fs::write(interface.join("type"), "519\n").unwrap();
++        std::fs::write(interface.join("addr_len"), "6\n").unwrap();
++        std::fs::create_dir_all(root.path().join("module/sipa_eth")).unwrap();
++        std::fs::create_dir_all(root.path().join("kernel/debug/sipa_eth/sipa_eth0")).unwrap();
++        root
++    }
++
++    #[test]
++    fn verified_f50_sipa_selects_mixed_rx_and_ethernet_tx() {
++        let root = fixture();
++        assert_eq!(
++            program_pair("sipa_eth0", false, root.path()).unwrap(),
++            ("wan_ingress_sipa", "wan_egress_l2")
++        );
++    }
++
++    #[test]
++    fn other_rawip_and_ethernet_interfaces_keep_existing_programs() {
++        let root = fixture();
++        for interface in ["wwan0", "tun0", "ppp0", "sipa_eth1", "sipa_eth0extra"] {
++            assert_eq!(
++                program_pair(interface, false, root.path()).unwrap(),
++                L3_PROGRAMS
++            );
++        }
++        assert_eq!(program_pair("eth0", true, root.path()).unwrap(), L2_PROGRAMS);
++    }
++
++    #[test]
++    fn mismatched_sipa_identity_is_rejected() {
++        let root = fixture();
++        let interface = root.path().join("class/net/sipa_eth0");
++        std::fs::write(interface.join("type"), "65534\n").unwrap();
++        assert!(program_pair("sipa_eth0", false, root.path()).is_err());
++        std::fs::write(interface.join("type"), "519\n").unwrap();
++        std::fs::write(interface.join("addr_len"), "0\n").unwrap();
++        assert!(program_pair("sipa_eth0", false, root.path()).is_err());
++    }
++
++    #[test]
++    fn module_and_per_interface_driver_evidence_are_required() {
++        let root = fixture();
++        let module = root.path().join("module/sipa_eth");
++        std::fs::remove_dir(&module).unwrap();
++        assert!(program_pair("sipa_eth0", false, root.path()).is_err());
++        std::fs::create_dir(&module).unwrap();
++        std::fs::remove_dir(root.path().join("kernel/debug/sipa_eth/sipa_eth0")).unwrap();
++        assert!(program_pair("sipa_eth0", false, root.path()).is_err());
++    }
++
++    #[test]
++    fn unreadable_sipa_identity_is_an_error() {
++        let root = fixture();
++        std::fs::remove_file(root.path().join("class/net/sipa_eth0/type")).unwrap();
++        assert!(program_pair("sipa_eth0", false, root.path()).is_err());
++    }
++}
+--- a/crates/honk-ebpf-common/src/lib.rs
++++ b/crates/honk-ebpf-common/src/lib.rs
+@@ -8,6 +8,7 @@
+ pub mod receive_trace;
+ pub mod redirect_need;
+ pub mod routing_policy;
++pub mod sipa;
+ 
+ // Re-export types moved to sub-modules (for honk-core compatibility)
+ pub use crate::conn::{ConnState, UdpDecisionSequence, UdpDecisionState};
+--- /dev/null
++++ b/crates/honk-ebpf-common/src/sipa.rs
+@@ -0,0 +1,118 @@
++//! Framing contract for the verified F50 SIPA driver and RAWIP BPF reinjection.
++
++pub const ETHERNET_HEADER_LEN: u32 = 14;
++pub const SIPA_PREFIX_LEN: usize = ETHERNET_HEADER_LEN as usize + 1;
++pub const ETH_P_IPV4: u16 = 0x0800;
++pub const ETH_P_IPV6: u16 = 0x86dd;
++const SIPA_DESTINATION: [u8; 6] = [0x16, 0x15, 0x14, 0x13, 0x12, 0x11];
++const SIPA_SOURCE: [u8; 6] = [0x11, 0x12, 0x13, 0x14, 0x15, 0x16];
++
++#[derive(Debug, PartialEq, Eq)]
++pub enum SipaFrameError {
++    UnsupportedProtocol,
++    InvalidHeader,
++}
++
++/// Accept only native SIPA pseudo-Ethernet or protocol-matching RAWIP replies.
++#[inline(always)]
++pub fn ingress_link_header_len(
++    prefix: &[u8; SIPA_PREFIX_LEN],
++    protocol: u16,
++) -> Result<u32, SipaFrameError> {
++    let version = match protocol {
++        ETH_P_IPV4 => 4,
++        ETH_P_IPV6 => 6,
++        _ => return Err(SipaFrameError::UnsupportedProtocol),
++    };
++    // __bpf_redirect_no_mac strips the header when dae0 targets a RAWIP device.
++    if prefix[0] >> 4 == version {
++        return Ok(0);
++    }
++    if prefix[..6] == SIPA_DESTINATION
++        && prefix[6..12] == SIPA_SOURCE
++        && u16::from_be_bytes([prefix[12], prefix[13]]) == protocol
++        && prefix[ETHERNET_HEADER_LEN as usize] >> 4 == version
++    {
++        return Ok(ETHERNET_HEADER_LEN);
++    }
++    Err(SipaFrameError::InvalidHeader)
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    fn native_prefix(protocol: u16) -> [u8; SIPA_PREFIX_LEN] {
++        let mut prefix = [
++            0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0, 0, 0,
++        ];
++        prefix[12..14].copy_from_slice(&protocol.to_be_bytes());
++        prefix[14] = if protocol == ETH_P_IPV4 { 0x45 } else { 0x60 };
++        prefix
++    }
++
++    #[test]
++    fn native_sipa_ipv4_and_ipv6_keep_ethernet_header() {
++        for protocol in [ETH_P_IPV4, ETH_P_IPV6] {
++            assert_eq!(
++                ingress_link_header_len(&native_prefix(protocol), protocol),
++                Ok(14)
++            );
++        }
++    }
++
++    #[test]
++    fn redirected_ipv4_and_ipv6_are_raw_ip() {
++        for (protocol, version) in [(ETH_P_IPV4, 0x45), (ETH_P_IPV6, 0x60)] {
++            let mut prefix = [0; SIPA_PREFIX_LEN];
++            prefix[0] = version;
++            assert_eq!(ingress_link_header_len(&prefix, protocol), Ok(0));
++        }
++    }
++
++    #[test]
++    fn raw_ipv4_source_address_is_not_mistaken_for_ether_type() {
++        let mut prefix = [0; SIPA_PREFIX_LEN];
++        prefix[0] = 0x45;
++        prefix[12..15].copy_from_slice(&[8, 0, 64]);
++        assert_eq!(ingress_link_header_len(&prefix, ETH_P_IPV4), Ok(0));
++    }
++
++    #[test]
++    fn arbitrary_ethernet_mac_is_not_accepted_as_sipa() {
++        let mut prefix = native_prefix(ETH_P_IPV4);
++        prefix[0] = 0x02;
++        assert_eq!(
++            ingress_link_header_len(&prefix, ETH_P_IPV4),
++            Err(SipaFrameError::InvalidHeader)
++        );
++    }
++
++    #[test]
++    fn protocol_and_ip_version_must_agree() {
++        let mut prefix = native_prefix(ETH_P_IPV4);
++        prefix[14] = 0x60;
++        assert_eq!(
++            ingress_link_header_len(&prefix, ETH_P_IPV4),
++            Err(SipaFrameError::InvalidHeader)
++        );
++        prefix[0] = 0x45;
++        assert_eq!(
++            ingress_link_header_len(&prefix, ETH_P_IPV6),
++            Err(SipaFrameError::InvalidHeader)
++        );
++    }
++
++    #[test]
++    fn inconsistent_ether_type_and_unsupported_protocol_are_explicit() {
++        let prefix = native_prefix(ETH_P_IPV6);
++        assert_eq!(
++            ingress_link_header_len(&prefix, ETH_P_IPV4),
++            Err(SipaFrameError::InvalidHeader)
++        );
++        assert_eq!(
++            ingress_link_header_len(&prefix, 0x0806),
++            Err(SipaFrameError::UnsupportedProtocol)
++        );
++    }
++}
+--- a/crates/honk-ebpf/src/main.rs
++++ b/crates/honk-ebpf/src/main.rs
+@@ -19,6 +19,7 @@
+ mod receive_trace;
+ pub mod route;
+ pub mod routing;
++pub mod sipa;
+ pub mod sk;
+ pub mod sk_lookup;
+ pub mod stats;
+--- a/crates/honk-ebpf/src/ingress.rs
++++ b/crates/honk-ebpf/src/ingress.rs
+@@ -971,7 +971,7 @@
+ // #[inline(never)]: shared by wan_ingress_l2/l3. Shallow call chain
+ // (only parse_packet + conn state update).
+ #[inline(never)]
+-fn do_tproxy_wan_ingress(ctx: &TcContext, link_h_len: u32) -> Verdict {
++pub(crate) fn do_tproxy_wan_ingress(ctx: &TcContext, link_h_len: u32) -> Verdict {
+     let scratch_key: u32 = 0;
+     let pkt = match PKT_SCRATCH_KEY.get_ptr_mut(scratch_key) {
+         Some(ptr) => unsafe { &mut *ptr },
+--- /dev/null
++++ b/crates/honk-ebpf/src/sipa.rs
+@@ -0,0 +1,26 @@
++//! SIPA native RX has pseudo-Ethernet framing; BPF-reinjected replies are RAWIP.
++
++use aya_ebpf::programs::TcContext;
++use aya_ebpf_bindings::bindings::__sk_buff;
++use honk_ebpf_common::sipa::{SIPA_PREFIX_LEN, SipaFrameError, ingress_link_header_len};
++
++use crate::action::{TC_ACT_OK, TC_ACT_SHOT, Verdict, flatten};
++
++#[inline(always)]
++fn ingress(ctx: &TcContext) -> Verdict {
++    let prefix = ctx
++        .load::<[u8; SIPA_PREFIX_LEN]>(0)
++        .map_err(|_| TC_ACT_SHOT)?;
++    let protocol = u16::from_be(ctx.skb.protocol() as u16);
++    match ingress_link_header_len(&prefix, protocol) {
++        Ok(header_len) => crate::ingress::do_tproxy_wan_ingress(ctx, header_len),
++        Err(SipaFrameError::UnsupportedProtocol) => Ok(TC_ACT_OK),
++        Err(SipaFrameError::InvalidHeader) => Err(TC_ACT_SHOT),
++    }
++}
++
++#[unsafe(no_mangle)]
++#[unsafe(link_section = "classifier")]
++pub fn wan_ingress_sipa(ctx: *mut __sk_buff) -> i32 {
++    flatten(ingress(&TcContext::new(ctx)))
++}
+--- a/doc/en/design/datapath.md
++++ b/doc/en/design/datapath.md
+@@ -41,6 +41,21 @@
+ ### Interface hook sets
+ 
+ Ethernet interfaces use the `_l2` programs; interfaces without an Ethernet header use `_l3`. Bridge and bond slaves receive equivalent owned hooks because traffic may bypass a master qdisc.
++
++This F50 build has a narrow SIPA WAN adapter: `sipa_eth0` must report RAWIP
++(`type=519`), six address bytes, and expose both `/sys/module/sipa_eth` and
++`/sys/kernel/debug/sipa_eth/sipa_eth0`. It selects `wan_egress_l2` because locally
++originated SIPA traffic retains Ethernet framing. `wan_ingress_sipa` accepts the
++driver's exact pseudo-Ethernet MAC pair (`16:15:14:13:12:11` destination,
++`11:12:13:14:15:16` source) and matching IPv4/IPv6 EtherType/version. It also accepts
++protocol-matching RAWIP replies: Linux strips the MAC when `dae0_ingress`
++redirects a reply into this RAWIP device. Other IP framing is rejected; non-IP
++protocols retain the ordinary pass-through behavior. Normal IP/transport
++validation and conntrack processing remain shared with the WAN ingress path.
++Missing or inconsistent SIPA identity evidence fails attachment explicitly.
++Startup and interface rebind use the same selector and log the selected SIPA
++programs. Other interface names retain the existing L2/L3 choice; this does not
++reclassify all RAWIP devices or change the kernel interface type.
+ 
+ | Topology | LAN-side hooks | WAN-side hooks |
+ | --- | --- | --- |
+--- a/doc/zh/design/datapath.md
++++ b/doc/zh/design/datapath.md
+@@ -41,6 +41,18 @@
+ ### 接口挂钩集合
+ 
+ 以太网接口使用 `_l2` 程序；没有以太网头的接口使用 `_l3`。流量可能绕过 master qdisc，因此 bridge 和 bond slave 也安装等价且由进程持有的挂钩。
++
++本 F50 构建仅为已核验的 SIPA WAN 增加适配：`sipa_eth0` 必须报告 RAWIP
++（`type=519`）、六字节地址，并同时存在 `/sys/module/sipa_eth` 和
++`/sys/kernel/debug/sipa_eth/sipa_eth0`。本机发出的 SIPA 流量保留以太网头，
++因此出站选择 `wan_egress_l2`。`wan_ingress_sipa` 只接受驱动固定的伪以太网
++MAC 对（目的 `16:15:14:13:12:11`、源 `11:12:13:14:15:16`）以及一致的
++IPv4/IPv6 EtherType、版本；同时接受与协议一致的 RAWIP 回包，因为 Linux
++会在 `dae0_ingress` 向此 RAWIP 接口回注时剥离 MAC 头。其它 IP 帧格式明确
++丢弃，非 IP 协议保留原有放行行为；后续 IP、传输层校验及连接跟踪复用 WAN
++入站路径。SIPA 身份证据缺失或不一致会明确报错，挂载不会继续。启动和接口
++重绑共用此选择逻辑并记录所选程序。其它接口名称保留原有 L2/L3 选择，不会
++把所有 RAWIP 接口改成 L2，也不会改变内核接口类型。
+ 
+ | 拓扑 | LAN 侧挂钩 | WAN 侧挂钩 |
+ | --- | --- | --- |

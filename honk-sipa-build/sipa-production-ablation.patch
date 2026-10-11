@@ -1,0 +1,22 @@
+--- a/crates/honk-core/src/ebpf/real/sipa.rs
++++ b/crates/honk-core/src/ebpf/real/sipa.rs
+@@ -49,7 +49,7 @@
+             && sysfs.join("kernel/debug/sipa_eth").join(interface).is_dir(),
+         "F50 SIPA driver evidence missing: require /sys/module/sipa_eth and per-interface debugfs directory"
+     );
+-    Ok(SIPA_PROGRAMS)
++    Ok(L3_PROGRAMS)
+ }
+ 
+ fn read_number(path: &Path) -> anyhow::Result<u32> {
+--- a/crates/honk-ebpf-common/src/sipa.rs
++++ b/crates/honk-ebpf-common/src/sipa.rs
+@@ -33,7 +33,7 @@
+         && u16::from_be_bytes([prefix[12], prefix[13]]) == protocol
+         && prefix[ETHERNET_HEADER_LEN as usize] >> 4 == version
+     {
+-        return Ok(ETHERNET_HEADER_LEN);
++        return Ok(0);
+     }
+     Err(SipaFrameError::InvalidHeader)
+ }
