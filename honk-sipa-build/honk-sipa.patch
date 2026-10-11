@@ -88,7 +88,7 @@
  mod tests;
 --- /dev/null
 +++ b/crates/honk-core/src/ebpf/real/sipa.rs
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,130 @@
 +//! Narrow compatibility adapter for the F50's verified SIPA WAN interface.
 +
 +use anyhow::Context;
@@ -184,7 +184,10 @@
 +                L3_PROGRAMS
 +            );
 +        }
-+        assert_eq!(program_pair("eth0", true, root.path()).unwrap(), L2_PROGRAMS);
++        assert_eq!(
++            program_pair("eth0", true, root.path()).unwrap(),
++            L2_PROGRAMS
++        );
 +    }
 +
 +    #[test]
