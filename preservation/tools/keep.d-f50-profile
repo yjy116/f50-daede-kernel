@@ -1,0 +1,21 @@
+# F50 custom configurations and support files for LuCI/sysupgrade backups.
+# mu300-update does NOT read this file. Follow the preserved upgrade procedure.
+/etc/mu300/
+/etc/honk/
+/etc/zerotier-f50/
+/etc/homeproxy/
+/etc/openclash/
+/etc/adguardhome/
+/etc/easytier/
+/etc/tailscale/
+/etc/sing-box/
+/etc/sysupgrade.conf
+/etc/rc.d/
+/etc/init.d/honk
+/etc/init.d/mu300-hw
+/usr/bin/honk-core
+/usr/share/rpcd/acl.d/luci-f50-thermal.json
+/www/luci-static/resources/view/status/include/15_f50_thermal.js
+/usr/share/luci/menu.d/luci-app-doona.json
+/www/luci-static/resources/view/services/doona.js
+/lib/upgrade/keep.d/f50-profile

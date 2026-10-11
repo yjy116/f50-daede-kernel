@@ -1,0 +1,6 @@
+# Keep historical deployment payloads byte-identical to their recorded hashes.
+preservation/tools/** -text
+device-customizations/** -text
+migration/v2026.10.18/** -text
+# This machine-exported historical JSON used CRLF; retain its original SHA.
+migration/v2026.10.18/userspace-migration-manifest.json whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

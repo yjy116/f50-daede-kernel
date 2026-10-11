@@ -1,0 +1,30 @@
+name: Verify F50 preservation tools
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'preservation/tools/**'
+      - '.github/workflows/verify-preservation.yml'
+  pull_request:
+    paths:
+      - 'preservation/tools/**'
+      - '.github/workflows/verify-preservation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Validate shell syntax and archive verification
+        run: |
+          bash -n preservation/tools/capture.sh
+          bash -n preservation/tools/verify-device-restore.sh
+          timeout 60 python3 -B preservation/tools/test_verify_snapshot.py
+          timeout 60 python3 -B preservation/tools/test_capture_recovery.py

@@ -1,0 +1,9 @@
+27f276ceb52f141a9632e0ca13841f829e2a5342b6e6133dd3833358cda84fd7  LICENSE.mu300-linux
+8226e76e21b7f1d4447f03cfa471ca6734dce6b9f863bdb036f397b20f5344f7  README.md
+960609ea8c390cdbbc8dc7f8735e156e6692a65929244dd8e39d001c22f35d9b  rootfs/etc/init.d/honk
+b2ea8323b7ada426175d4df48c5e04245269b606b7ee9a77dfd20bd330b880c6  rootfs/etc/init.d/mu300-hw
+c2212eccceecedee97ab976a44e59fe8b009bea6424b0418b430a603df6e0670  rootfs/usr/share/luci/menu.d/luci-app-doona.json
+c7254a806e477af1e94ab564ccfe689b4294c7e54618ed625a1b571ff91d41b4  rootfs/usr/share/rpcd/acl.d/luci-f50-thermal.json
+77fb15ba93da9cbf86275386afad5209e36154eca42db91680a69fedc8a03fe9  rootfs/www/luci-static/resources/view/services/doona.js
+a1b499989191f46693936474a44945842462ada976bba15dfcaebb916042b036  rootfs/www/luci-static/resources/view/status/include/15_f50_thermal.js
+d87161339b2edb8e2025e9b9220fb8f7c27ac249a64b61cf4824193fb1ebe30b  source-manifest.json

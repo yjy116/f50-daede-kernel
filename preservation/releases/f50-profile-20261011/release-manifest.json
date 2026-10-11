@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "tag": "f50-profile-20261011",
+  "userspace": "v2026.10.18",
+  "openwrt": "25.12.5",
+  "kernel": "7.2.9-f50-bpf1",
+  "honk": "debug.2026.10.9.native-api.2-f50-sipa1",
+  "doona": "0.1.0-beta.19",
+  "encrypted_backup": {
+    "asset": "f50-profile-20261011.tar.age",
+    "bytes": 81499768,
+    "sha256": "d9ae5336fa94ae3d72c05fdb2346ddbdbbf5cb3a8f3aaabc89c3fe07d4cb5719",
+    "archive_members": 40,
+    "age_version": "v1.3.2",
+    "local_roundtrip": "PASS",
+    "baseline_manifest_sha256": "be80781ca2c5f0698aab1932a76fc3d36d876c75e780649704083bedda12a524"
+  },
+  "snapshot_verification": {
+    "status": "PASS",
+    "members": 588,
+    "sqlite_integrity": "ok",
+    "external_service_symlinks": 64
+  },
+  "publication_checks": {
+    "archive_tests": 14,
+    "recovery_tests": 8,
+    "shell_syntax": "PASS",
+    "source_copy": "byte-identical"
+  },
+  "prior_device_checks": {
+    "linux_isolated_restore": "PASS",
+    "scope": "file contents, modes, uid/gid, symlinks",
+    "outer_artifact_hashes": 23,
+    "node_http_healthy": 3,
+    "node_udp_dns_healthy": 3,
+    "phone_proxy_and_luci": "user confirmed"
+  },
+  "limitations": [
+    "Not a complete flash image or standalone rootfs",
+    "Stock mu300-update does not automatically preserve all customizations",
+    "Intermittent post-reboot cellular return-path loss remains unresolved",
+    "Recovery requires the privately retained age identity"
+  ]
+}

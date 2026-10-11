@@ -1,5 +1,12 @@
 # F50 kernels with BTF and eBPF
 
+The verified device profile now uses **mu300-linux v2026.10.18 userspace,
+7.2.9-f50-bpf1, Honk with the SIPA fix, and Doona beta.19**. Configuration
+preservation tools, upgrade instructions and the encrypted recovery release are
+documented in [preservation/README.md](preservation/README.md). Custom LuCI/init
+sources and the historical v17-to-v18 migration are retained for traceability.
+The intermittent cellular return-path failure after reboot remains unresolved.
+
 The current independent [7.2.9 BPF/JIT/BTF candidate](scripts/BPF72.md) builds
 MU300 `v2026.10.17` with 379 modules and suffix `-f50-bpf1`, repairing three
 case-colliding module pairs in the official 376-file bundle.
@@ -16,7 +23,11 @@ The release suffix is `-f50-dae1`. Network features are built in because the ups
 
 The manual **F50 adapted networking packages** workflow repackages hash-pinned ZeroTier, daed and LuCI daede APKs for these built-in kernel features. It preserves upstream payloads and install scripts, changes only the reviewed dependency/version/description metadata, and verifies exact file and link contents. It consumes a fixed successful kernel build report and its matching full configuration. Each packaging run signs with a temporary container-only private key and exports only the packages, public key and audit manifest. This does not install anything; the running device and installation transaction still need separate verification. See [packaging instructions](packaging/USAGE.txt).
 
-This repository contains build definitions and references to public sources. It does not contain device backups, device credentials, mobile configuration or a device-specific boot image. The workflow does not flash a device or publish a GitHub Release.
+Git tracks reviewed source, public references and non-secret validation summaries.
+Complete device settings and recovery materials are stored only in an **age-encrypted
+Release attachment**; no plaintext credentials, subscriptions or device private
+keys are committed. The recovery key is retained privately by the owner. Kernel
+build workflows do not flash a device or publish a GitHub Release.
 
 A successful build proves the recorded build checks only. Before installation, verify the complete device-specific boot image layout and keep a working rollback image. Hardware boot, USB, Wi-Fi, eBPF loading and actual proxy traffic still require tests on the F50. Stock OpenWrt 6.12 kernel modules and unrelated BTF packages must not be substituted for this kernel's own outputs.
 

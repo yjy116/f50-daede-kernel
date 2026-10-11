@@ -4,3 +4,12 @@
 /package-artifacts/
 __pycache__/
 *.pyc
+
+# Device configuration is published only as encrypted Release assets.
+private/
+**/baseline/
+**/settings*.tar.gz
+**/runtime.tar.gz
+**/recovery-key.txt
+**/maintenance_key*
+*.tar.age

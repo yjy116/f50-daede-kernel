@@ -1,0 +1,5 @@
+path	mode	uid	gid	target
+etc/rc.d/S95mu300-cpu	0o777	0	0	../init.d/mu300-cpu
+etc/rc.d/S96mu300-traffic	0o777	0	0	../init.d/mu300-traffic
+usr/bin/mu300-cpu	0o777	0	0	/opt/mu300/bin/mu300-cpu
+usr/bin/mu300-traffic	0o777	0	0	/opt/mu300/bin/mu300-traffic

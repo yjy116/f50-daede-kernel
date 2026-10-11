@@ -1,0 +1,15 @@
+{
+    "admin/services/doona": {
+        "title": "Doona",
+        "order": 60,
+        "action": {
+            "type": "view",
+            "path": "services/doona"
+        },
+        "depends": {
+            "fs": {
+                "/usr/bin/honk-core": "executable"
+            }
+        }
+    }
+}

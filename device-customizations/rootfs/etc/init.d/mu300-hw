@@ -1,0 +1,124 @@
+#!/bin/sh /etc/rc.common
+# Hardware bring-up before netifd: vendor drivers, zram, Wi-Fi (SC2355), first-boot Wi-Fi config, Bluetooth off
+START=12
+export PATH="$PATH:/opt/mu300/busybox-bin"
+
+# Gate only an already configured AP. First boot and saved station mode retain their original path.
+configured_ap() {
+	[ -e /etc/mu300/wifi-configured ] &&
+		[ ! -e /etc/mu300/wifi-client.conf ] &&
+		[ "$(uci -q get wireless.radio0)" = wifi-device ] &&
+		[ "$(uci -q get wireless.ap0.mode)" = ap ] &&
+		[ "$(uci -q get wireless.ap0.device)" = radio0 ]
+}
+
+# Print only whether this option has a pending delta; never retain configuration values from other options.
+disabled_pending() (
+	set -o pipefail
+	uci -q changes wireless | awk '
+		/^[-+]?wireless\.radio0\.disabled(=|$)/ { found=1 }
+		END { print found+0 }'
+)
+
+boot() {
+	local present=0 value= pending=
+	/opt/mu300/bin/mu300-led power on
+	/opt/mu300/bin/mu300-usb boot
+	if ! configured_ap; then
+		hw_bringup > /tmp/mu300-hw.log 2>&1 &
+		return
+	fi
+	if value=$(uci -q get wireless.radio0.disabled); then present=1; fi
+	pending=$(disabled_pending) || {
+		logger -t mu300-hw 'Cannot inspect radio0 disabled delta; AP bring-up was not started'
+		return 1
+	}
+	uci -q set wireless.radio0.disabled=1 || {
+		logger -t mu300-hw 'Cannot gate radio0; AP bring-up was not started'
+		return 1
+	}
+	logger -t mu300-hw 'Configured AP gated until WCN probe and regulatory setup finish'
+	ap_bringup "$present" "$value" "$pending" > /tmp/mu300-hw.log 2>&1 &
+}
+
+# Clear only this option's delta history, then rebuild its original pending semantics.
+restore_disabled() {
+	uci -q revert wireless.radio0.disabled || return 1
+	[ "$3" = 1 ] || return 0
+	if [ "$1" = 1 ]; then
+		uci -q set "wireless.radio0.disabled=$2"
+	else
+		uci -q delete wireless.radio0.disabled
+	fi
+}
+
+wait_wcn_live() {
+	local module= state=
+	for module in wcn_bsp sprd_wlan_combo; do
+		logger -t mu300-hw "Waiting for $module probe to finish"
+		while :; do
+			state=$(cat "/sys/module/$module/initstate") || {
+				logger -t mu300-hw "Cannot read $module initstate; AP gate remains active"
+				return 1
+			}
+			case "$state" in
+				live) break ;;
+				coming) sleep 1 ;;
+				*) logger -t mu300-hw "Unexpected $module initstate $state; AP gate remains active"; return 1 ;;
+			esac
+		done
+	done
+}
+
+ap_bringup() {
+	local code=0 country= stage='hardware bring-up' gate=active
+	# This function runs only in the background subshell; failures retain the temporary gate and USB stays up.
+	set -e
+	trap 'code=$?; if [ "$code" -ne 0 ]; then logger -t mu300-hw "AP startup failed at $stage (exit $code, temporary gate $gate); inspect /tmp/mu300-hw.log and /tmp/mu300-wifi-start.log"; fi' EXIT
+	hw_bringup
+	stage='WCN module readiness'
+	wait_wcn_live
+	stage='PHY and country verification'
+	# A disabled radio may have no netdev; netifd creates the AP after the gate is released.
+	[ -e /sys/class/ieee80211/phy0 ]
+	country=$(uci -q get wireless.radio0.country)
+	[ -n "$country" ]
+	iw reg get | grep -q "country $country:"
+	stage='disabled state restoration'
+	restore_disabled "$1" "$2" "$3"
+	gate=restored
+	stage='AP startup request'
+	case "$2" in
+		1|on|true|yes|enabled)
+			logger -t mu300-hw 'WCN setup finished; original disabled radio state preserved'
+			;;
+		*)
+			logger -t mu300-hw 'WCN setup finished; original radio0 disabled state restored; requesting AP startup'
+			wifi up
+			;;
+	esac
+	trap - EXIT
+}
+
+# Keep hardware work in the background: slow drivers must not block USB or console startup.
+hw_bringup() {
+	local country= n=
+	/opt/mu300/bin/extra-modules >/tmp/mu300-extra-modules.log 2>&1
+	/opt/mu300/bin/zram-start >/dev/null 2>&1
+	/opt/mu300/bin/wifi-start >/tmp/mu300-wifi-start.log 2>&1
+	# cfg80211 looked for regulatory.db before the rootfs was mounted; load it now so hostapd sees the country rules
+	/opt/mu300/bin/regdb-load >>/tmp/mu300-wifi-start.log 2>&1
+	/opt/mu300/bin/openwrt-wifi-config >>/tmp/mu300-wifi-start.log 2>&1
+	# the U30 Air's NFC tag: the hotspot's name and password, if that is what it holds (see mu300-nfc)
+	[ "$(/opt/mu300/bin/mu300-device)" = u30air ] && /opt/mu300/bin/mu300-nfc sync >/tmp/mu300-nfc.log 2>&1
+	# apply the country before netifd starts hostapd, otherwise 5 GHz channels are still NO-IR under world rules
+	country=$(uci -q get wireless.radio0.country)
+	if [ -n "$country" ]; then
+		iw reg set "$country"
+		for n in $(seq 1 10); do iw reg get | grep -q "country $country:" && break; sleep 1; done
+	fi
+}
+
+start() {
+	boot
+}
