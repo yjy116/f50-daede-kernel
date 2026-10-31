@@ -22,9 +22,25 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
+      - name: Prepare pinned Python dependency
+        run: |
+          python3 -m venv "$RUNNER_TEMP/f50-preservation-venv"
+          "$RUNNER_TEMP/f50-preservation-venv/bin/python" -m pip install --disable-pip-version-check cryptography==50.0.2
+          echo "$RUNNER_TEMP/f50-preservation-venv/bin" >> "$GITHUB_PATH"
+      - name: Download and verify official test kernel bundle
+        run: |
+          mkdir -p preservation/tools/official
+          curl --fail --location --proto '=https' --tlsv1.2 \
+            --output preservation/tools/official/mu300-kernel-7.2.tar.gz \
+            https://github.com/dikeckaan/mu300-linux/releases/download/v2026.10.30.1/mu300-kernel-7.2.tar.gz
+          printf '%s  %s\n' \
+            f52f3e043ea5fc6cb58e187a7643a35053b5eda1ad7b5c9de71ae8feae9ff03a \
+            preservation/tools/official/mu300-kernel-7.2.tar.gz > "$RUNNER_TEMP/f50-preservation-kernel.sha256"
+          sha256sum --check "$RUNNER_TEMP/f50-preservation-kernel.sha256"
       - name: Validate shell syntax and archive verification
         run: |
           bash -n preservation/tools/capture.sh
           bash -n preservation/tools/verify-device-restore.sh
           timeout 60 python3 -B preservation/tools/test_verify_snapshot.py
           timeout 60 python3 -B preservation/tools/test_capture_recovery.py
+          timeout 60 python3 -B preservation/tools/test_final_snapshot_metadata.py

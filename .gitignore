@@ -13,3 +13,6 @@ private/
 **/recovery-key.txt
 **/maintenance_key*
 *.tar.age
+
+# Local/CI verified official kernel input; never commit the 55 MB bundle.
+/preservation/tools/official/

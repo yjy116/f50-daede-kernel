@@ -4,3 +4,6 @@ device-customizations/** -text
 migration/v2026.10.18/** -text
 # This machine-exported historical JSON used CRLF; retain its original SHA.
 migration/v2026.10.18/userspace-migration-manifest.json whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+preservation/upgrades/20261031/** -text
+# Preserve the recorded helper's intentional trailing empty line.
+preservation/upgrades/20261031/migration-common.sh whitespace=-blank-at-eof

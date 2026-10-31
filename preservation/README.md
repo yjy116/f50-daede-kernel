@@ -1,6 +1,20 @@
 # F50 配置固化与追溯
 
-已验收基线：mu300-linux `v2026.10.18` / OpenWrt `25.12.5`，内核
+2026-10-31 已启动官方 mu300-linux `v2026.10.30.1` / OpenWrt `25.12.6` /
+Linux `7.2.13`，运行时 BPF JIT 为 `1`，BTF 可读，安装包为 321 个。
+当前保留 SIPA 适配 Honk 和 Doona。插 SIM 后及随后带 SIM 重启后，三个节点的 HTTP/
+UDP DNS 六项检查均通过，Google/ipify 的真实代理流量有回包证据；用户关闭手机移动数据、
+连接 F50 后确认 Google、温度、Doona 入口和流量页均正常。
+官方内核仍有 `pname_routing_reduced` 限制：当前运行的 `zerotier-one` 短名与实读 `comm`
+一致，不等于长名称或依赖 `argv` 的规则也受支持。在线订阅刷新改变了运行时节点 ID，
+按新 ID 完成的六项节点检查及 Google/ipify 真实代理复测均通过。ZeroTier 曾出现下一跳
+ARP 未响应，未修改服务或防火墙即恢复，两个报告目标均已通过 ping/HTTP 复测。
+最终 `official-validated-20261031` 快照已捕获，下载校验、加密与发布仍在进行。
+详见 [本次官方升级报告](releases/f50-official-20261031.md) 与
+[后续完整官方更新政策](UPGRADE-POLICY.md)。本页下面的加密附件和恢复命令仍对应
+原始 `f50-profile-20261011`，不能当作本次升级后的新快照。
+
+2026-10-11 历史已验收基线：mu300-linux `v2026.10.18` / OpenWrt `25.12.5`，内核
 `7.2.9-f50-bpf1`（BPF JIT/BTF），Honk
 `debug.2026.10.9.native-api.2-f50-sipa1`，Doona `0.1.0-beta.19`。
 账号、订阅、热点、蜂窝、插件配置和服务启停状态以设备当前设置为准；
@@ -76,5 +90,6 @@ timeout 60 python3 -B tools/test_capture_recovery.py
 - `tools/README.txt` 是设备上保存的原始说明，提到的维护项目 `AGENTS.md`
   对应本仓库的升级保留规则。
 
-真实热点 Google 访问、三个节点 HTTP/UDP DNS、温度、Doona 入口及流量页此前均已验收。
-重启后的偶发蜂窝回程丢包仍未根治；这一公开归档不改变该结论。
+上述历史基线的真实热点 Google 访问、三个节点 HTTP/UDP DNS、温度、Doona 入口及流量页此前均已验收；
+这些旧结果不继承为 2026-10-31 新系统的蜂窝或代理验收。
+本次带 SIM 重启验收通过，但不能据此证明历史偶发蜂窝回程丢包已永久根治。

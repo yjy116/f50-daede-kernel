@@ -1,19 +1,50 @@
-# F50 kernels with BTF and eBPF
+# F50 official updates and configuration preservation
 
-The verified device profile now uses **mu300-linux v2026.10.18 userspace,
-7.2.9-f50-bpf1, Honk with the SIPA fix, and Doona beta.19**. Configuration
-preservation tools, upgrade instructions and the encrypted recovery release are
-documented in [preservation/README.md](preservation/README.md). Custom LuCI/init
-sources and the historical v17-to-v18 migration are retained for traceability.
-The intermittent cellular return-path failure after reboot remains unresolved.
+The device booted **official mu300-linux v2026.10.30.1 / OpenWrt 25.12.6 /
+Linux 7.2.13**, with BPF JIT enabled, runtime BTF, and 321 installed packages.
+The existing SIPA-adapted Honk core and Doona beta.19 remain in place.
+See the [2026-10-31 upgrade report](preservation/releases/f50-official-20261031.md)
+for the pinned official artifacts, configuration migration, boot readback and
+validation limits. After SIM insertion, all three nodes passed HTTP and independent
+UDP DNS probes. A subsequent reboot with the SIM inserted produced a new boot ID,
+automatic WAN recovery, and another pass of all six probes. Google and ipify
+requests also had complete proxy-flow reply evidence. With mobile data disabled,
+the owner confirmed Google, LuCI temperatures, Doona and the traffic page over F50 Wi-Fi.
+Honk also reports `pname_routing_reduced`: the official kernel lacks its full
+process-argument observation facilities. The configured `zerotier-one` name equals
+its observed short `comm` name; this does not establish support for long names or
+argv-dependent rules. The subscription refreshed successfully after an initial
+pre-WAN stale state, changing runtime node IDs; all six node probes and both proxy
+requests passed again using the refreshed IDs. A temporary ZeroTier next-hop ARP
+failure recovered without service or firewall changes, with both reported targets
+passing ping and HTTP on retest. The final `official-validated-20261031` capture is
+complete, with 3,289 members, SQLite integrity, Linux isolated restore and both-side hashes verified.
+The encrypted recovery package passed a local age round trip; see the
+[f50-official-20261031 release](https://github.com/yjy116/f50-daede-kernel/releases/tag/f50-official-20261031)
+for attachment publication and download-verification records. One successful reboot does
+not prove that the historical intermittent return-path failure is permanently fixed.
 
-The current independent [7.2.9 BPF/JIT/BTF candidate](scripts/BPF72.md) builds
+Future maintenance uses complete official rootfs updates and an official kernel
+that already provides BPF JIT/BTF. This device's maintenance plan no longer
+compiles or deploys the historical custom kernels in this repository. If Honk
+proves incompatible, the owner permits migration to a verified daede setup;
+this update has not made that change. OpenClash remains installed and disabled.
+Follow [UPGRADE-POLICY.md](preservation/UPGRADE-POLICY.md) and
+[preservation/README.md](preservation/README.md). Each new encrypted backup uses
+its own release tag; the existing `f50-profile-20261011` release is retained.
+
+## Historical build workflows
+
+The following workflows and custom sources are retained for traceability, not as
+instructions for the current device's next upgrade.
+
+The historical independent [7.2.9 BPF/JIT/BTF candidate](scripts/BPF72.md) builds
 MU300 `v2026.10.17` with 379 modules and suffix `-f50-bpf1`, repairing three
 case-colliding module pairs in the official 376-file bundle.
 Its manual workflow is **F50 Linux 7.2.9 BPF JIT and BTF**; the historical builds
 below remain available unchanged.
 
-Build Linux **6.18.54** and **7.2.8** for the ZTE F50/MU300 using GitHub Actions' native ARM64 runners. Both use the MU300 port at commit `1a69a41ea9d20fadd575e9b082364d61ce5fcf9a`, with an explicit configuration fragment for dae/daed capabilities.
+The earlier workflow built Linux **6.18.54** and **7.2.8** for the ZTE F50/MU300 using GitHub Actions' native ARM64 runners. Both use the MU300 port at commit `1a69a41ea9d20fadd575e9b082364d61ce5fcf9a`, with an explicit configuration fragment for dae/daed capabilities.
 
 The workflow is started manually from **Actions → F50 kernels with BTF and eBPF → Run workflow**. Each kernel is built independently, including all 31 matching vendor modules. Kernel tarballs, helper bundle and action revisions are pinned. Compiler and container details are recorded with the outputs.
 

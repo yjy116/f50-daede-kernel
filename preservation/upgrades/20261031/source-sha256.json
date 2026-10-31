@@ -1,0 +1,22 @@
+{
+  "01-stage-rootfs.sh": "57fe1dd05615765c36fa6fdc1cd4bca3bc9b8d86c01963e4d5fc7e3dc03412b4",
+  "02-carry-candidate.sh": "5cce7eb77db3feb9f2331c050dbdbfb9db1dc93fb4fe96177ed8c1ad90597681",
+  "03-install-official-kernel.sh": "024981ba52941aacfc855ec7d6d3a3f7be1130ecaf9c47966a90fdf63c7c80c9",
+  "activate-candidate.sh": "0b6f827d89fcada801876678e13adeba080bf03952dfaa96a1161947143347ef",
+  "defaults-actions.tsv": "16b183ac9a0796bb0d0891094617b32c4611a9e9128804b32d9856d4783e9e86",
+  "defaults-review.md": "bfd7f15f6abda4e5610a6d4c1a59cda7ed82299932cdb694931b4ebf2424d3de",
+  "expected-packages.tsv": "3a6f4e3e04d5899eb70bbb22d08f4fe07fb549bcee379e435d00e79ca72ed6ce",
+  "finalize-candidate.sh": "eb51c64865e276ca9e00200f19b3332c244af832a7c9926d606f4c65c8365ebb",
+  "freeze-candidate-data.sh": "8ea5665f4ace5360cdbc22aa6616c8666e8cb637b7524b3c247d27eab5b8d440",
+  "install-candidate-plugins.sh": "bab5b3e6596daca191e973a9b33d8b72800c507743aebcdd17fdf062ba546de2",
+  "migration-common.sh": "0b4b7f928fcc1e2099405c0ff482fc695382c305604a8e5f7beb8b393c2aad41",
+  "migration-plan.md": "328736b469d362f2141cc6758fbf206343644b307de22024cbd88ab82d4ae8de",
+  "package_backup.py": "010d0514fe90ba7798c77ffef1654b74431687f16c35870de3905cca9f73fe01",
+  "probe_acceptance.py": "e6ca7a47d8ecadc18d28bc103b6bccdef97ad1621d17fda07525e383a62dbeb2",
+  "revoke_maintenance.py": "3b9b949a11c90c242030edbee6636e678905d1bb717376a3e4707a56ab6cf83b",
+  "run_proxy_acceptance.py": "b7c1d9c007d22c9aebf25fc45f7784885b076c0b7a73d27f14e8f2727c304930",
+  "ssh_ops.py": "0d6425782a2a9049dfc549fa6472dc061d4ec2edf40bfd3ddba413e42857f482",
+  "validate_candidate.py": "981a0684829e07965df9949300f7c75395dfa92687707efbc457d802d82f8cca",
+  "verify-final-restore.sh": "fc3d6dd0302fa488e12829492c8aaef4aa819978ddac658d71a13da4dd37c8d8",
+  "verify_boot_readback.py": "6c55831ac31070bfb1c100ef21659053fac6e2fe39cced2ed74375457d0b2888"
+}
