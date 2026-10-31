@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "tag": "f50-official-20261031",
+  "assets": {
+    "SHA256SUMS": {
+      "sha256": "84b46b029487d20e854d27b4c739fb0ac996d2a3bfe62aee7bfa75071e6249f0",
+      "bytes": 187
+    },
+    "f50-official-20261031.tar.gz.age": {
+      "sha256": "332b4f2876692ac7e0ca783dd63d7ef1d7c5f200891bf8fbfa0acd15a38c1d03",
+      "bytes": 418034202
+    },
+    "release-manifest.json": {
+      "sha256": "3507b728d7f8c2e80bae81ec5281a97ef186175d5da852a52bf04e8d9302c4b9",
+      "bytes": 1152
+    }
+  },
+  "remote_decryption": "PASS",
+  "all_recovery_input_hashes": "PASS",
+  "archive_members": 126,
+  "snapshot_members_prevalidated": 3289,
+  "sqlite_and_linux_restore_prevalidated": "PASS",
+  "release_url": "https://github.com/yjy116/f50-daede-kernel/releases/tag/f50-official-20261031",
+  "release_target": "5f031dd712a27ce027f07149c5ab9da4c4737317",
+  "github_api_digests": "PASS",
+  "workflow_run": "https://github.com/yjy116/f50-daede-kernel/actions/runs/41215408753",
+  "workflow_conclusion": "success"
+}

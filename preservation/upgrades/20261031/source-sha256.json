@@ -18,5 +18,6 @@
   "ssh_ops.py": "0d6425782a2a9049dfc549fa6472dc061d4ec2edf40bfd3ddba413e42857f482",
   "validate_candidate.py": "981a0684829e07965df9949300f7c75395dfa92687707efbc457d802d82f8cca",
   "verify-final-restore.sh": "fc3d6dd0302fa488e12829492c8aaef4aa819978ddac658d71a13da4dd37c8d8",
-  "verify_boot_readback.py": "6c55831ac31070bfb1c100ef21659053fac6e2fe39cced2ed74375457d0b2888"
+  "verify_boot_readback.py": "6c55831ac31070bfb1c100ef21659053fac6e2fe39cced2ed74375457d0b2888",
+  "verify_published_backup.py": "e3fecb2cf974703494186cdf449f197f621eb4be8122c46aefd58d69b8bd28d8"
 }
